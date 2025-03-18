@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Registros</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Consultar Registros</h1>
+    <a href="{{ url_for('paginas.home') }}">
+        <button>Voltar</button>
+    </a>
+    <br><br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Hora Início</th>
+                <th>Hora Fim</th>
+                <th>Cliente</th>
+                <th>PCO</th>
+                <th>Serviço</th>
+                <th>Atividade</th>
+                <th>Tipo de Hora</th>
+                <th>Descrição</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in registros %}
+                <tr>
+                    <td>{{ registro.DataRegistro }}</td>
+                    <td>{{ registro.HoraInicio }}</td>
+                    <td>{{ registro.HoraFim }}</td>
+                    <td>{{ registro.Cliente }}</td>
+                    <td>{{ registro.PcoCliente }}</td>
+                    <td>{{ registro.Servico }}</td>
+                    <td>{{ registro.Atividade }}</td>
+                    <td>{{ registro.TipoHora }}</td>
+                    <td>{{ registro.Descricao }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

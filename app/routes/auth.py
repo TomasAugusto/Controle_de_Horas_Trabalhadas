@@ -1,5 +1,6 @@
+# routes/auth.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from ..config import conectar_banco  # Importação relativa corrigida
+from app.config import conectar_banco
 
 # Cria um Blueprint para as rotas de autenticação
 auth_bp = Blueprint('auth', __name__)
@@ -25,7 +26,7 @@ def login():
             session['usuario_id'] = user[0]  # Guarda o ID na sessão
             session['usuario_nome'] = user[1]  # Guarda o nome na sessão
             session['usuario_admin'] = user[2]  # Guarda se é administrador (1 ou 0)
-            return redirect(url_for('home'))
+            return redirect(url_for('paginas.home'))  # Atualizado para paginas.home
         else:
             flash('Usuário ou senha inválidos', 'error')
 

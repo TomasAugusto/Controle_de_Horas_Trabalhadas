@@ -1,12 +1,11 @@
-from flask import Flask, render_template, redirect, url_for, session
-from app.routes.auth import auth_bp  # Importação absoluta corrigida
+from flask import Flask, redirect, url_for
+from app.routes.auth import auth_bp
 from app.routes.paginas import paginas_bp
-from app.config import conectar_banco  # Importação absoluta corrigida
 
 app = Flask(__name__)
 app.secret_key = 'sua_chave_secreta'  # Necessário para usar flash e session
 
-# Registra o Blueprint de autenticação
+# Registra os Blueprints
 app.register_blueprint(auth_bp, url_prefix='/')
 app.register_blueprint(paginas_bp, url_prefix='/')
 
@@ -14,14 +13,6 @@ app.register_blueprint(paginas_bp, url_prefix='/')
 @app.route('/')
 def index():
     return redirect(url_for('auth.login'))
-
-# Página Home
-@app.route('/home')
-def home():
-    if 'usuario_id' not in session:
-        return redirect(url_for('auth.login'))
-    
-    return render_template('home.html', usuario=session['usuario_nome'])
 
 if __name__ == '__main__':
     app.run(debug=True)

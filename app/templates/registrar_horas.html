@@ -4,11 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Horas</title>
+    <style>
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
     <h1>Registrar Horas</h1>
-    <a href="{{ url_for('home') }}">
+    <a href="{{ url_for('paginas.home') }}">
         <button>Voltar</button>
     </a>
+    <br><br>
+
+    <form method="POST" action="{{ url_for('paginas.salvar_registro') }}">
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" required>
+
+        <label for="hora_inicio">Hora de Início:</label>
+        <input type="time" id="hora_inicio" name="hora_inicio" required>
+
+        <label for="hora_fim">Hora de Fim:</label>
+        <input type="time" id="hora_fim" name="hora_fim" required>
+
+        <label for="cliente">Cliente:</label>
+        <select id="cliente" name="cliente" required>
+            <option value="">Selecione um cliente</option>
+            {% for cliente in clientes %}
+                <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="pco">PCO:</label>
+        <select id="pco" name="pco" required>
+            <option value="">Selecione um PCO</option>
+            {% for pco in pcos %}
+                <option value="{{ pco.IdPcoCliente }}">{{ pco.Nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="servico">Serviço:</label>
+        <select id="servico" name="servico" required>
+            <option value="">Selecione um serviço</option>
+            {% for servico in servicos %}
+                <option value="{{ servico.IdServico }}">{{ servico.Nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="tipo_hora">Tipo de Hora:</label>
+        <select id="tipo_hora" name="tipo_hora" required>
+            <option value="">Selecione um tipo de hora</option>
+            {% for tipo in tipos_horas %}
+                <option value="{{ tipo.IdTipoHora }}">{{ tipo.Nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="atividade">Atividade:</label>
+        <select id="atividade" name="atividade" required>
+            <option value="">Selecione uma atividade</option>
+            {% for atividade in atividades %}
+                <option value="{{ atividade.IdAtividade }}">{{ atividade.Nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+        <button type="submit">Salvar</button>
+    </form>
 </body>
 </html>
