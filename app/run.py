@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session
 from app.routes.auth import auth_bp  # Importação absoluta corrigida
+from app.routes.paginas import paginas_bp
 from app.config import conectar_banco  # Importação absoluta corrigida
 
 app = Flask(__name__)
@@ -7,6 +8,7 @@ app.secret_key = 'sua_chave_secreta'  # Necessário para usar flash e session
 
 # Registra o Blueprint de autenticação
 app.register_blueprint(auth_bp, url_prefix='/')
+app.register_blueprint(paginas_bp, url_prefix='/')
 
 # Rota principal redirecionando para login
 @app.route('/')

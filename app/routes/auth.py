@@ -15,7 +15,7 @@ def login():
         cursor = conn.cursor()
         
         # Consulta para verificar se o usuário existe e a senha está correta
-        cursor.execute("SELECT IdUsuario, Usuario FROM Usuarios WHERE Usuario = ? AND Senha = ?", (usuario, senha))
+        cursor.execute("SELECT IdUsuario, Usuario, Administrador FROM Usuarios WHERE Usuario = ? AND Senha = ?", (usuario, senha))
         user = cursor.fetchone()
 
         cursor.close()
@@ -24,6 +24,7 @@ def login():
         if user:
             session['usuario_id'] = user[0]  # Guarda o ID na sessão
             session['usuario_nome'] = user[1]  # Guarda o nome na sessão
+            session['usuario_admin'] = user[2]  # Guarda se é administrador (1 ou 0)
             return redirect(url_for('home'))
         else:
             flash('Usuário ou senha inválidos', 'error')

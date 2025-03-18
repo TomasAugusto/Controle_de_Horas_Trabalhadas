@@ -3,10 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Menu</title>
 </head>
 <body>
-    <h1>Bem-vindo, {{ usuario }}!</h1>
-    <a href="{{ url_for('auth.logout') }}">Sair</a>  <!-- Corrigido para auth.logout -->
+    <h1>Bem-vindo, {{ session['usuario_nome'] }}!</h1>
+
+    <!-- Botões para todos os usuários -->
+    <a href="{{ url_for('paginas.registrar_horas') }}">
+        <button>Registrar Horas</button>
+    </a>
+    <a href="{{ url_for('paginas.consultar_registros') }}">
+        <button>Consultar Registros</button>
+    </a>
+    <a href="{{ url_for('paginas.valor_a_receber') }}">
+        <button>Valor a Receber</button>
+    </a>
+
+    <!-- Botões apenas para administradores -->
+    {% if session['usuario_admin'] == 1 %}
+        <a href="{{ url_for('paginas.cadastrar_usuario') }}">
+            <button>Cadastrar Usuário</button>
+        </a>
+        <a href="{{ url_for('paginas.cadastrar_cliente') }}">
+            <button>Cadastrar Cliente</button>
+        </a>
+        <a href="{{ url_for('paginas.cadastrar_pco') }}">
+            <button>Cadastrar PCO</button>
+        </a>
+    {% endif %}
+
+    <br><br>
+    <a href="{{ url_for('auth.logout') }}">
+        <button>Sair</button>
+    </a>
 </body>
 </html>
