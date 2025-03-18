@@ -1,0 +1,1 @@
+pip install Flask flask-sqlalchemy pyodbc flask_login flask_bcrypt

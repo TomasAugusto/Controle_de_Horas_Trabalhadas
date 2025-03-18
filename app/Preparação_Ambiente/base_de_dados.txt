@@ -1,0 +1,61 @@
+
+1. **Atividades**
+   - `IdAtividade` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `Ativo` (bit)
+
+2. **Clientes**
+   - `IdCliente` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `IdUsuarioCadastro` (int)
+   - `Ativo` (bit)
+
+3. **PcoClientes**
+   - `IdPcoCliente` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `Ativo` (bit)
+   - `IdCliente` (int, FK)
+
+4. **RegistrosHoras**
+   - `IdRegistroHora` (int, PK)
+   - `IdColaborador` (int)
+   - `DataRegistro` (date)
+   - `HoraInicio` (time(0))
+   - `HoraFim` (time(0))
+   - `IdCliente` (int, FK)
+   - `IdPcoCliente` (int, FK)
+   - `IdServico` (int, FK)
+   - `IdTipoHora` (int, FK)
+   - `IdAtividade` (int, FK)
+   - `Descricao` (varchar(1000))
+
+5. **Servicos**
+   - `IdServico` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `Ativo` (bit)
+
+6. **Setores**
+   - `IdSetor` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `Ativo` (bit)
+
+7. **TiposHoras**
+   - `IdTipoHora` (int, PK)
+   - `Nome` (varchar(100))
+   - `Descricao` (varchar(150))
+   - `Ativo` (bit)
+
+8. **Usuarios**
+   - `IdUsuario` (int, PK)
+   - `Usuario` (varchar(100))
+   - `Senha` (varchar(50))
+   - `ValorHora` (float)
+   - `Setor` (int, FK)
+   - `Administrador` (bit)
+   - `DataCadastro` (datetime)
+   - `Ativo` (bit)
