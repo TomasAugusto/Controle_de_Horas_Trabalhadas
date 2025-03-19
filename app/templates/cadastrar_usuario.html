@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar PCO</title>
+    <title>Cadastrar Usuário</title>
     <style>
         form {
             max-width: 500px;
@@ -53,25 +53,34 @@
     </style>
 </head>
 <body>
-    <h1>Cadastrar PCO</h1>
+    <h1>Cadastrar Usuário</h1>
     <a href="{{ url_for('paginas.home') }}">
         <button>Voltar</button>
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('paginas.salvar_pco') }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
+    <form method="POST" action="{{ url_for('paginas.salvar_usuario') }}">
+        <label for="usuario">Usuário:</label>
+        <input type="text" id="usuario" name="usuario" required>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
 
-        <label for="cliente">Cliente:</label>
-        <select id="cliente" name="cliente" required>
-            <option value="">Selecione um cliente</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
+        <label for="valor_hora">Valor da Hora:</label>
+        <input type="number" id="valor_hora" name="valor_hora" step="0.01" required>
+
+        <label for="setor">Setor:</label>
+        <select id="setor" name="setor" required>
+            <option value="">Selecione um setor</option>
+            {% for setor in setores %}
+                <option value="{{ setor.IdSetor }}">{{ setor.Nome }}</option>
             {% endfor %}
+        </select>
+
+        <label for="administrador">Administrador:</label>
+        <select id="administrador" name="administrador" required>
+            <option value="0">Não</option>
+            <option value="1">Sim</option>
         </select>
 
         <label for="ativo">Ativo:</label>
@@ -83,28 +92,30 @@
         <button type="submit">Salvar</button>
     </form>
 
-    <h2>PCOs Cadastrados</h2>
+    <h2>Usuários Cadastrados</h2>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Cliente</th>
+                <th>Usuário</th>
+                <th>Valor da Hora</th>
+                <th>Setor</th>
+                <th>Administrador</th>
                 <th>Ativo</th>
-                <th>Ações</th>
+                <th>Ações</th> <!-- Nova coluna para ações -->
             </tr>
         </thead>
         <tbody>
-            {% for pco in pcos %}
+            {% for usuario in usuarios %}
                 <tr>
-                    <td>{{ pco.IdPcoCliente }}</td>
-                    <td>{{ pco.Nome }}</td>
-                    <td>{{ pco.Descricao }}</td>
-                    <td>{{ pco.Cliente }}</td>
-                    <td>{{ 'Sim' if pco.Ativo else 'Não' }}</td>
+                    <td>{{ usuario.IdUsuario }}</td>
+                    <td>{{ usuario.Usuario }}</td>
+                    <td>{{ usuario.ValorHora }}</td>
+                    <td>{{ usuario.Setor }}</td>
+                    <td>{{ 'Sim' if usuario.Administrador else 'Não' }}</td>
+                    <td>{{ 'Sim' if usuario.Ativo else 'Não' }}</td>
                     <td>
-                        <a href="{{ url_for('paginas.editar_pco', id_pco=pco.IdPcoCliente) }}">
+                        <a href="{{ url_for('paginas.editar_usuario', id_usuario=usuario.IdUsuario) }}">
                             <button>Editar</button>
                         </a>
                     </td>

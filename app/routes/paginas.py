@@ -1,6 +1,7 @@
 # routes/paginas.py
 from flask import Blueprint, render_template, redirect, url_for, session, flash, request
 from app.config import conectar_banco
+import pyodbc
 
 # Cria um Blueprint para as rotas de páginas
 paginas_bp = Blueprint('paginas', __name__)
@@ -89,6 +90,7 @@ def salvar_registro():
 
     flash('Registro salvo com sucesso!', 'success')
     return redirect(url_for('paginas.registrar_horas'))
+    
 
 # Rota para Consultar Registros
 @paginas_bp.route('/consultar_registros')
@@ -139,22 +141,388 @@ def valor_a_receber():
     return render_template('valor_a_receber.html')
 
 # Rota para Cadastrar Usuário (apenas administradores)
-@paginas_bp.route('/cadastrar_usuario')
+@paginas_bp.route('/cadastrar_usuario', methods=['GET'])
 def cadastrar_usuario():
     if 'usuario_id' not in session or session['usuario_admin'] != 1:
         return redirect(url_for('auth.login'))
-    return render_template('cadastrar_usuario.html')
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os setores
+    cursor.execute("SELECT IdSetor, Nome FROM Setores WHERE Ativo = 1")
+    setores = cursor.fetchall()
+
+    # Consulta para obter todos os usuários cadastrados
+    cursor.execute("""
+        SELECT u.IdUsuario, u.Usuario, u.ValorHora, s.Nome AS Setor, u.Administrador, u.Ativo
+        FROM Usuarios u
+        INNER JOIN Setores s ON u.Setor = s.IdSetor
+    """)
+    usuarios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_usuario.html', setores=setores, usuarios=usuarios)
+
+@paginas_bp.route('/salvar_usuario', methods=['POST'])
+def salvar_usuario():
+    if 'usuario_id' not in session or session['usuario_admin'] != 1:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    usuario = request.form['usuario']
+    senha = request.form['senha']
+    valor_hora = float(request.form['valor_hora'])
+    setor = int(request.form['setor'])
+    administrador = int(request.form['administrador'])
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere o novo usuário na tabela Usuarios
+    query = """
+    INSERT INTO Usuarios (
+        Usuario, Senha, ValorHora, Setor, Administrador, DataCadastro, Ativo
+    ) VALUES (?, ?, ?, ?, ?, GETDATE(), ?)
+    """
+    try:
+        cursor.execute(query, (usuario, senha, valor_hora, setor, administrador, ativo))
+        conn.commit()
+        flash('Usuário cadastrado com sucesso!', 'success')
+    except pyodbc.IntegrityError as e:
+        conn.rollback()
+        flash('Erro ao cadastrar o usuário. Verifique os dados e tente novamente.', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_usuario'))
+
+
+@paginas_bp.route('/editar_usuario/<int:id_usuario>', methods=['GET'])
+def editar_usuario(id_usuario):
+    if 'usuario_id' not in session or session['usuario_admin'] != 1:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os setores
+    cursor.execute("SELECT IdSetor, Nome FROM Setores WHERE Ativo = 1")
+    setores = cursor.fetchall()
+
+    # Consulta para obter os dados do usuário selecionado
+    cursor.execute("""
+        SELECT IdUsuario, Usuario, ValorHora, Setor, Administrador, Ativo
+        FROM Usuarios
+        WHERE IdUsuario = ?
+    """, (id_usuario,))
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not usuario:
+        flash('Usuário não encontrado.', 'error')
+        return redirect(url_for('paginas.cadastrar_usuario'))
+
+    # Passa os dados para o template
+    return render_template('editar_usuario.html', setores=setores, usuario=usuario)
+
+@paginas_bp.route('/salvar_edicao_usuario/<int:id_usuario>', methods=['POST'])
+def salvar_edicao_usuario(id_usuario):
+    if 'usuario_id' not in session or session['usuario_admin'] != 1:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    usuario = request.form['usuario']
+    senha = request.form['senha']
+    valor_hora = float(request.form['valor_hora'])
+    setor = int(request.form['setor'])
+    administrador = int(request.form['administrador'])
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza o usuário na tabela Usuarios
+    if senha:
+        query = """
+        UPDATE Usuarios
+        SET Usuario = ?, Senha = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
+        WHERE IdUsuario = ?
+        """
+        cursor.execute(query, (usuario, senha, valor_hora, setor, administrador, ativo, id_usuario))
+    else:
+        query = """
+        UPDATE Usuarios
+        SET Usuario = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
+        WHERE IdUsuario = ?
+        """
+        cursor.execute(query, (usuario, valor_hora, setor, administrador, ativo, id_usuario))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Usuário atualizado com sucesso!', 'success')
+    return redirect(url_for('paginas.cadastrar_usuario'))
 
 # Rota para Cadastrar Cliente (apenas administradores)
-@paginas_bp.route('/cadastrar_cliente')
+@paginas_bp.route('/cadastrar_cliente', methods=['GET'])
 def cadastrar_cliente():
-    if 'usuario_id' not in session or session['usuario_admin'] != 1:
+    if 'usuario_id' not in session:
         return redirect(url_for('auth.login'))
-    return render_template('cadastrar_cliente.html')
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter todos os clientes cadastrados
+    cursor.execute("SELECT IdCliente, Nome, Descricao, Ativo FROM Clientes")
+    clientes = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_cliente.html', clientes=clientes)
+
+@paginas_bp.route('/salvar_cliente', methods=['POST'])
+def salvar_cliente():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere o novo cliente na tabela Clientes
+    query = """
+    INSERT INTO Clientes (
+        Nome, Descricao, IdUsuarioCadastro, Ativo
+    ) VALUES (?, ?, ?, ?)
+    """
+    try:
+        cursor.execute(query, (nome, descricao, session['usuario_id'], ativo))
+        conn.commit()
+        flash('Cliente cadastrado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar o cliente: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_cliente'))
+
+@paginas_bp.route('/editar_cliente/<int:id_cliente>', methods=['GET'])
+def editar_cliente(id_cliente):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os dados do cliente selecionado
+    cursor.execute("""
+        SELECT IdCliente, Nome, Descricao, Ativo
+        FROM Clientes
+        WHERE IdCliente = ?
+    """, (id_cliente,))
+    cliente = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not cliente:
+        flash('Cliente não encontrado.', 'error')
+        return redirect(url_for('paginas.cadastrar_cliente'))
+
+    # Passa os dados para o template
+    return render_template('editar_cliente.html', cliente=cliente)
+
+
+@paginas_bp.route('/salvar_edicao_cliente/<int:id_cliente>', methods=['POST'])
+def salvar_edicao_cliente(id_cliente):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza o cliente na tabela Clientes
+    query = """
+    UPDATE Clientes
+    SET Nome = ?, Descricao = ?, Ativo = ?
+    WHERE IdCliente = ?
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo, id_cliente))
+        conn.commit()
+        flash('Cliente atualizado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar o cliente: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_cliente'))
+
+
+
+
+
 
 # Rota para Cadastrar PCO (apenas administradores)
-@paginas_bp.route('/cadastrar_pco')
+@paginas_bp.route('/cadastrar_pco', methods=['GET'])
 def cadastrar_pco():
-    if 'usuario_id' not in session or session['usuario_admin'] != 1:
+    if 'usuario_id' not in session:
         return redirect(url_for('auth.login'))
-    return render_template('cadastrar_pco.html')
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os clientes
+    cursor.execute("SELECT IdCliente, Nome FROM Clientes WHERE Ativo = 1")
+    clientes = cursor.fetchall()
+
+    # Consulta para obter todos os PCOs cadastrados
+    cursor.execute("""
+        SELECT p.IdPcoCliente, p.Nome, p.Descricao, c.Nome AS Cliente, p.Ativo
+        FROM PcoClientes p
+        INNER JOIN Clientes c ON p.IdCliente = c.IdCliente
+    """)
+    pcos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_pco.html', clientes=clientes, pcos=pcos)
+
+
+@paginas_bp.route('/editar_pco/<int:id_pco>', methods=['GET'])
+def editar_pco(id_pco):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os clientes
+    cursor.execute("SELECT IdCliente, Nome FROM Clientes WHERE Ativo = 1")
+    clientes = cursor.fetchall()
+
+    # Consulta para obter os dados do PCO selecionado
+    cursor.execute("""
+        SELECT IdPcoCliente, Nome, Descricao, IdCliente, Ativo
+        FROM PcoClientes
+        WHERE IdPcoCliente = ?
+    """, (id_pco,))
+    pco = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not pco:
+        flash('PCO não encontrado.', 'error')
+        return redirect(url_for('paginas.cadastrar_pco'))
+
+    # Passa os dados para o template
+    return render_template('editar_pco.html', clientes=clientes, pco=pco)
+
+
+@paginas_bp.route('/salvar_pco', methods=['POST'])
+def salvar_pco():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    id_cliente = int(request.form['cliente'])
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere o novo PCO na tabela PcoClientes
+    query = """
+    INSERT INTO PcoClientes (
+        Nome, Descricao, IdCliente, Ativo
+    ) VALUES (?, ?, ?, ?)
+    """
+    try:
+        cursor.execute(query, (nome, descricao, id_cliente, ativo))
+        conn.commit()
+        flash('PCO cadastrado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar o PCO: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_pco'))
+
+
+
+
+@paginas_bp.route('/salvar_edicao_pco/<int:id_pco>', methods=['POST'])
+def salvar_edicao_pco(id_pco):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    id_cliente = int(request.form['cliente'])
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza o PCO na tabela PcoClientes
+    query = """
+    UPDATE PcoClientes
+    SET Nome = ?, Descricao = ?, IdCliente = ?, Ativo = ?
+    WHERE IdPcoCliente = ?
+    """
+    try:
+        cursor.execute(query, (nome, descricao, id_cliente, ativo, id_pco))
+        conn.commit()
+        flash('PCO atualizado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar o PCO: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_pco'))
