@@ -526,3 +526,349 @@ def salvar_edicao_pco(id_pco):
         conn.close()
 
     return redirect(url_for('paginas.cadastrar_pco'))
+
+
+
+@paginas_bp.route('/cadastrar_setor', methods=['GET'])
+def cadastrar_setor():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter todos os setores cadastrados
+    cursor.execute("SELECT IdSetor, Nome, Descricao, Ativo FROM Setores")
+    setores = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_setor.html', setores=setores)
+
+
+@paginas_bp.route('/salvar_setor', methods=['POST'])
+def salvar_setor():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere o novo setor na tabela Setores
+    query = """
+    INSERT INTO Setores (
+        Nome, Descricao, Ativo
+    ) VALUES (?, ?, ?)
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo))
+        conn.commit()
+        flash('Setor cadastrado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar o setor: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_setor'))
+
+
+@paginas_bp.route('/editar_setor/<int:id_setor>', methods=['GET'])
+def editar_setor(id_setor):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os dados do setor selecionado
+    cursor.execute("""
+        SELECT IdSetor, Nome, Descricao, Ativo
+        FROM Setores
+        WHERE IdSetor = ?
+    """, (id_setor,))
+    setor = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not setor:
+        flash('Setor não encontrado.', 'error')
+        return redirect(url_for('paginas.cadastrar_setor'))
+
+    # Passa os dados para o template
+    return render_template('editar_setor.html', setor=setor)
+
+@paginas_bp.route('/salvar_edicao_setor/<int:id_setor>', methods=['POST'])
+def salvar_edicao_setor(id_setor):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza o setor na tabela Setores
+    query = """
+    UPDATE Setores
+    SET Nome = ?, Descricao = ?, Ativo = ?
+    WHERE IdSetor = ?
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo, id_setor))
+        conn.commit()
+        flash('Setor atualizado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar o setor: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_setor'))
+
+
+@paginas_bp.route('/cadastrar_servico', methods=['GET'])
+def cadastrar_servico():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter todos os serviços cadastrados
+    cursor.execute("SELECT IdServico, Nome, Descricao, Ativo FROM Servicos")
+    servicos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_servico.html', servicos=servicos)
+
+
+@paginas_bp.route('/salvar_servico', methods=['POST'])
+def salvar_servico():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere o novo serviço na tabela Servicos
+    query = """
+    INSERT INTO Servicos (
+        Nome, Descricao, Ativo
+    ) VALUES (?, ?, ?)
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo))
+        conn.commit()
+        flash('Serviço cadastrado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar o serviço: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_servico'))
+
+
+@paginas_bp.route('/editar_servico/<int:id_servico>', methods=['GET'])
+def editar_servico(id_servico):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os dados do serviço selecionado
+    cursor.execute("""
+        SELECT IdServico, Nome, Descricao, Ativo
+        FROM Servicos
+        WHERE IdServico = ?
+    """, (id_servico,))
+    servico = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not servico:
+        flash('Serviço não encontrado.', 'error')
+        return redirect(url_for('paginas.cadastrar_servico'))
+
+    # Passa os dados para o template
+    return render_template('editar_servico.html', servico=servico)
+
+
+@paginas_bp.route('/salvar_edicao_servico/<int:id_servico>', methods=['POST'])
+def salvar_edicao_servico(id_servico):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza o serviço na tabela Servicos
+    query = """
+    UPDATE Servicos
+    SET Nome = ?, Descricao = ?, Ativo = ?
+    WHERE IdServico = ?
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo, id_servico))
+        conn.commit()
+        flash('Serviço atualizado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar o serviço: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_servico'))
+
+
+@paginas_bp.route('/cadastrar_atividade', methods=['GET'])
+def cadastrar_atividade():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter todas as atividades cadastradas
+    cursor.execute("SELECT IdAtividade, Nome, Descricao, Ativo FROM Atividades")
+    atividades = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Passa os dados para o template
+    return render_template('cadastrar_atividade.html', atividades=atividades)
+
+@paginas_bp.route('/salvar_atividade', methods=['POST'])
+def salvar_atividade():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Insere a nova atividade na tabela Atividades
+    query = """
+    INSERT INTO Atividades (
+        Nome, Descricao, Ativo
+    ) VALUES (?, ?, ?)
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo))
+        conn.commit()
+        flash('Atividade cadastrada com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar a atividade: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_atividade'))
+
+@paginas_bp.route('/editar_atividade/<int:id_atividade>', methods=['GET'])
+def editar_atividade(id_atividade):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os dados da atividade selecionada
+    cursor.execute("""
+        SELECT IdAtividade, Nome, Descricao, Ativo
+        FROM Atividades
+        WHERE IdAtividade = ?
+    """, (id_atividade,))
+    atividade = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not atividade:
+        flash('Atividade não encontrada.', 'error')
+        return redirect(url_for('paginas.cadastrar_atividade'))
+
+    # Passa os dados para o template
+    return render_template('editar_atividade.html', atividade=atividade)
+
+
+@paginas_bp.route('/salvar_edicao_atividade/<int:id_atividade>', methods=['POST'])
+def salvar_edicao_atividade(id_atividade):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Obtém os dados do formulário
+    nome = request.form['nome']
+    descricao = request.form['descricao']
+    ativo = int(request.form['ativo'])
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Atualiza a atividade na tabela Atividades
+    query = """
+    UPDATE Atividades
+    SET Nome = ?, Descricao = ?, Ativo = ?
+    WHERE IdAtividade = ?
+    """
+    try:
+        cursor.execute(query, (nome, descricao, ativo, id_atividade))
+        conn.commit()
+        flash('Atividade atualizada com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar a atividade: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('paginas.cadastrar_atividade'))

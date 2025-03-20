@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Setor</title>
+    <style>
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Editar Setor</h1>
+    <a href="{{ url_for('paginas.cadastrar_setor') }}">
+        <button>Voltar</button>
+    </a>
+    <br><br>
+
+    <form method="POST" action="{{ url_for('paginas.salvar_edicao_setor', id_setor=setor.IdSetor) }}">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="{{ setor.Nome }}" required>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" rows="4" required>{{ setor.Descricao }}</textarea>
+
+        <label for="ativo">Ativo:</label>
+        <select id="ativo" name="ativo" required>
+            <option value="1" {% if setor.Ativo == 1 %}selected{% endif %}>Sim</option>
+            <option value="0" {% if setor.Ativo == 0 %}selected{% endif %}>Não</option>
+        </select>
+
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>
