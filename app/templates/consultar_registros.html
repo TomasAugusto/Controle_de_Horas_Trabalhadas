@@ -115,5 +115,47 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Script de ordenação -->
+    <script>
+        function sortTable(columnIndex) {
+            const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Verifica se a coluna já está ordenada (ascendente ou descendente)
+            const isAscending = table.getAttribute('data-sort-asc') === 'true';
+            table.setAttribute('data-sort-asc', !isAscending);
+
+            // Ordena as linhas com base no conteúdo da coluna
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].textContent.trim();
+                const cellB = rowB.cells[columnIndex].textContent.trim();
+
+                if (isAscending) {
+                    return cellA.localeCompare(cellB);
+                } else {
+                    return cellB.localeCompare(cellA);
+                }
+            });
+
+            // Remove as linhas atuais da tabela
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            // Adiciona as linhas ordenadas de volta à tabela
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Adiciona eventos de clique aos cabeçalhos das colunas
+        document.addEventListener('DOMContentLoaded', () => {
+            const headers = document.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.style.cursor = 'pointer'; // Muda o cursor para indicar que é clicável
+                header.addEventListener('click', () => sortTable(index));
+            });
+        });
+    </script>
 </body>
 </html>
