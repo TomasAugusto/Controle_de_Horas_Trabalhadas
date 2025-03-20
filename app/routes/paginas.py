@@ -1,5 +1,5 @@
 # routes/paginas.py
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request ,jsonify
 from app.config import conectar_banco
 import pyodbc
 
@@ -91,6 +91,26 @@ def salvar_registro():
     flash('Registro salvo com sucesso!', 'success')
     return redirect(url_for('paginas.registrar_horas'))
     
+
+@paginas_bp.route('/pcos_por_cliente/<int:id_cliente>', methods=['GET'])
+def pcos_por_cliente(id_cliente):
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    # Conecta ao banco de dados
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    # Consulta para obter os PCOs do cliente selecionado
+    cursor.execute("SELECT IdPcoCliente, Nome FROM PcoClientes WHERE IdCliente = ? AND Ativo = 1", (id_cliente,))
+    pcos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Retorna os PCOs como JSON
+    return jsonify([{'IdPcoCliente': pco.IdPcoCliente, 'Nome': pco.Nome} for pco in pcos])
+
 
 # Rota para Consultar Registros
 @paginas_bp.route('/consultar_registros')
@@ -872,3 +892,4 @@ def salvar_edicao_atividade(id_atividade):
         conn.close()
 
     return redirect(url_for('paginas.cadastrar_atividade'))
+

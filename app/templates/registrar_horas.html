@@ -49,7 +49,7 @@
         <input type="time" id="hora_fim" name="hora_fim" required>
 
         <label for="cliente">Cliente:</label>
-        <select id="cliente" name="cliente" required>
+        <select id="cliente" name="cliente" required onchange="carregarPcos(this.value)">
             <option value="">Selecione um cliente</option>
             {% for cliente in clientes %}
                 <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
@@ -59,9 +59,7 @@
         <label for="pco">PCO:</label>
         <select id="pco" name="pco" required>
             <option value="">Selecione um PCO</option>
-            {% for pco in pcos %}
-                <option value="{{ pco.IdPcoCliente }}">{{ pco.Nome }}</option>
-            {% endfor %}
+            <!-- Os PCOs serão carregados dinamicamente aqui -->
         </select>
 
         <label for="servico">Serviço:</label>
@@ -93,5 +91,28 @@
 
         <button type="submit">Salvar</button>
     </form>
+
+    <script>
+        function carregarPcos(idCliente) {
+            if (!idCliente) {
+                document.getElementById('pco').innerHTML = '<option value="">Selecione um PCO</option>';
+                return;
+            }
+
+            fetch(`/pcos_por_cliente/${idCliente}`)
+                .then(response => response.json())
+                .then(data => {
+                    const selectPco = document.getElementById('pco');
+                    selectPco.innerHTML = '<option value="">Selecione um PCO</option>';
+                    data.forEach(pco => {
+                        const option = document.createElement('option');
+                        option.value = pco.IdPcoCliente;
+                        option.textContent = pco.Nome;
+                        selectPco.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar PCOs:', error));
+        }
+    </script>
 </body>
 </html>
