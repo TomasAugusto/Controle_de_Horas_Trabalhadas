@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultar Registros</title>
+    <title>Consultar Registros (Admin)</title>
     <style>
         table {
             width: 100%;
@@ -42,7 +42,7 @@
     </style>
 </head>
 <body>
-    <h1>Consultar Registros</h1>
+    <h1>Consultar Registros (Admin)</h1>
     <a href="{{ url_for('paginas.home') }}">
         <button>Voltar</button>
     </a>
@@ -50,7 +50,19 @@
 
     <!-- Formulário de Filtros -->
     <div class="filtros">
-        <form method="GET" action="{{ url_for('paginas.consultar_registros') }}">
+        <form method="GET" action="{{ url_for('paginas.admin_consultar_registros') }}">
+            <!-- Filtro de Colaborador (movido para o início) -->
+            <label for="colaborador">Colaborador:</label>
+            <select id="colaborador" name="colaborador">
+                <option value="">Todos</option>
+                {% for colaborador in colaboradores %}
+                    <option value="{{ colaborador.IdUsuario }}" {% if request.args.get('colaborador') == colaborador.IdUsuario|string %}selected{% endif %}>
+                        {{ colaborador.Usuario }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <!-- Outros filtros -->
             <label for="data_inicio">Data Início:</label>
             <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
 
@@ -78,7 +90,7 @@
             </select>
 
             <button type="submit">Filtrar</button>
-            <a href="{{ url_for('paginas.consultar_registros') }}">
+            <a href="{{ url_for('paginas.admin_consultar_registros') }}">
                 <button type="button">Limpar Filtros</button>
             </a>
         </form>
@@ -88,6 +100,8 @@
     <table>
         <thead>
             <tr>
+                <!-- Coluna Colaborador movida para o início -->
+                <th>Colaborador</th>
                 <th>Data</th>
                 <th>Hora Início</th>
                 <th>Hora Fim</th>
@@ -102,6 +116,8 @@
         <tbody>
             {% for registro in registros %}
                 <tr>
+                    <!-- Coluna Colaborador movida para o início -->
+                    <td>{{ registro.Colaborador }}</td>
                     <td>{{ registro.DataRegistro.strftime('%d/%m/%Y') }}</td>
                     <td>{{ registro.HoraInicio }}</td>
                     <td>{{ registro.HoraFim }}</td>
