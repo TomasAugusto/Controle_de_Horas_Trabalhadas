@@ -15,7 +15,7 @@
     <a href="{{ url_for('paginas.consultar_registros') }}">
         <button>Consultar Registros</button>
     </a>
-    <a href="{{ url_for('paginas.valor_a_receber') }}">
+    <a href="{{ url_for('paginas.calcular_valor_mensal') }}">
         <button>Valor a Receber</button>
     </a>
 
@@ -41,6 +41,9 @@
         </a>
         <a href="{{ url_for('paginas.admin_consultar_registros') }}">
             <button>Consultar Registros</button>
+        </a>
+        <a href="{{ url_for('paginas.admin_calcular_valor_mensal') }}">
+            <button>Valor a Pagar</button>
         </a>
     {% endif %}
 

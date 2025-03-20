@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular Valor Mensal</title>
+    <style>
+        .filtros {
+            margin-bottom: 20px;
+        }
+        .filtros label {
+            margin-right: 10px;
+        }
+        .filtros input, .filtros select {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .resultado {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calcular Valor Mensal</h1>
+    <a href="{{ url_for('paginas.home') }}">
+        <button>Voltar</button>
+    </a>
+    <br><br>
+
+    <!-- Formulário de Filtros -->
+    <div class="filtros">
+        <form method="GET" action="{{ url_for('paginas.calcular_valor_mensal') }}">
+            <label for="mes">Mês:</label>
+            <select id="mes" name="mes">
+                {% for i in range(1, 13) %}
+                    <option value="{{ i }}" {% if i == mes %}selected{% endif %}>{{ meses[i - 1] }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="ano">Ano:</label>
+            <input type="number" id="ano" name="ano" value="{{ ano }}" min="2000" max="2100">
+
+            <button type="submit">Calcular</button>
+        </form>
+    </div>
+
+    <!-- Resultado -->
+    <div class="resultado">
+        <p><strong>Valor da Hora:</strong> R$ {{ "%.2f"|format(valor_hora) }}</p>
+        <p><strong>Total de Horas Trabalhadas:</strong> {{ "%.2f"|format(total_horas) }} horas</p>
+        <p><strong>Valor Total a Receber:</strong> R$ {{ "%.2f"|format(valor_total) }}</p>
+        <p><strong>Mês:</strong> {{ nome_mes }} de {{ ano }}</p>
+    </div>
+</body>
+</html>
