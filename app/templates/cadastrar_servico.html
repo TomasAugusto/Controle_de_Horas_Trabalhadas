@@ -50,6 +50,38 @@
         tr:hover {
             background-color: #f1f1f1;
         }
+
+        /* Estilo para a mensagem flutuante */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
     </style>
 </head>
 <body>
@@ -58,6 +90,15 @@
         <button>Voltar</button>
     </a>
     <br><br>
+
+    <!-- Exibir mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div id="toast" class="toast">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <form method="POST" action="{{ url_for('paginas.salvar_servico') }}">
         <label for="nome">Nome:</label>
@@ -102,5 +143,23 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        // Função para exibir a mensagem flutuante
+        function showToast() {
+            var toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(function(){ toast.classList.remove("show"); }, 3000);
+        }
+
+        // Exibir a mensagem flutuante se houver mensagens flash
+        window.onload = function() {
+            var toast = document.getElementById("toast");
+            if (toast) {
+                showToast();
+            }
+        };
+    </script>
+    
 </body>
 </html>
