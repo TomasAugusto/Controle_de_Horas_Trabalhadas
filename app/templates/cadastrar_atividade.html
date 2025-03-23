@@ -59,7 +59,7 @@
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('paginas.salvar_atividade') }}">
+    <form method="POST" action="{{ url_for('cadastrar_atividade.salvar_atividade') }}">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required>
 
@@ -94,7 +94,7 @@
                     <td>{{ atividade.Descricao }}</td>
                     <td>{{ 'Sim' if atividade.Ativo else 'Não' }}</td>
                     <td>
-                        <a href="{{ url_for('paginas.editar_atividade', id_atividade=atividade.IdAtividade) }}">
+                        <a href="{{ url_for('cadastrar_atividade.editar_atividade', id_atividade=atividade.IdAtividade) }}">
                             <button>Editar</button>
                         </a>
                     </td>

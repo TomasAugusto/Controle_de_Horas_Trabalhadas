@@ -50,7 +50,7 @@
 
     <!-- Formulário de Filtros -->
     <div class="filtros">
-        <form method="GET" action="{{ url_for('paginas.consultar_registros') }}">
+        <form method="GET" action="{{ url_for('consultar_registros.consultar_registros') }}">
             <label for="data_inicio">Data Início:</label>
             <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
 
@@ -78,7 +78,7 @@
             </select>
 
             <button type="submit">Filtrar</button>
-            <a href="{{ url_for('paginas.consultar_registros') }}">
+            <a href="{{ url_for('consultar_registros.consultar_registros') }}">
                 <button type="button">Limpar Filtros</button>
             </a>
         </form>

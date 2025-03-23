@@ -59,7 +59,7 @@
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('paginas.salvar_usuario') }}">
+    <form method="POST" action="{{ url_for('cadastrar_usuario.salvar_usuario') }}">
         <label for="usuario">Usuário:</label>
         <input type="text" id="usuario" name="usuario" required>
 
@@ -115,7 +115,7 @@
                     <td>{{ 'Sim' if usuario.Administrador else 'Não' }}</td>
                     <td>{{ 'Sim' if usuario.Ativo else 'Não' }}</td>
                     <td>
-                        <a href="{{ url_for('paginas.editar_usuario', id_usuario=usuario.IdUsuario) }}">
+                        <a href="{{ url_for('cadastrar_usuario.editar_usuario', id_usuario=usuario.IdUsuario) }}">
                             <button>Editar</button>
                         </a>
                     </td>

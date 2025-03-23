@@ -33,12 +33,12 @@
 </head>
 <body>
     <h1>Editar Usuário</h1>
-    <a href="{{ url_for('paginas.cadastrar_usuario') }}">
+    <a href="{{ url_for('cadastrar_usuario.cadastrar_usuario') }}">
         <button>Voltar</button>
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('paginas.salvar_edicao_usuario', id_usuario=usuario.IdUsuario) }}">
+    <form method="POST" action="{{ url_for('cadastrar_usuario.salvar_edicao_usuario', id_usuario=usuario.IdUsuario) }}">
         <label for="usuario">Usuário:</label>
         <input type="text" id="usuario" name="usuario" value="{{ usuario.Usuario }}" required>
 

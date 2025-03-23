@@ -9,40 +9,40 @@
     <h1>Bem-vindo, {{ session['usuario_nome'] }}!</h1>
 
     <!-- Botões para todos os usuários -->
-    <a href="{{ url_for('paginas.registrar_horas') }}">
+    <a href="{{ url_for('registrar_horas.registrar_horas') }}">
         <button>Registrar Horas</button>
     </a>
-    <a href="{{ url_for('paginas.consultar_registros') }}">
+    <a href="{{ url_for('consultar_registros.consultar_registros') }}">
         <button>Consultar Registros</button>
     </a>
-    <a href="{{ url_for('paginas.calcular_valor_mensal') }}">
+    <a href="{{ url_for('valor_a_receber.calcular_valor_mensal') }}">
         <button>Valor a Receber</button>
     </a>
 
     <!-- Botões apenas para administradores -->
     {% if session['usuario_admin'] == 1 %}
-        <a href="{{ url_for('paginas.cadastrar_usuario') }}">
+        <a href="{{ url_for('cadastrar_usuario.cadastrar_usuario') }}">
             <button>Cadastrar Usuário</button>
         </a>
-        <a href="{{ url_for('paginas.cadastrar_cliente') }}">
+        <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}">
             <button>Cadastrar Cliente</button>
         </a>
-        <a href="{{ url_for('paginas.cadastrar_pco') }}">
+        <a href="{{ url_for('cadastrar_pco.cadastrar_pco') }}">
             <button>Cadastrar PCO</button>
         </a>
-        <a href="{{ url_for('paginas.cadastrar_setor') }}">
+        <a href="{{ url_for('cadastrar_setor.cadastrar_setor') }}">
             <button>Cadastrar Setor</button>
         </a>
-        <a href="{{ url_for('paginas.cadastrar_servico') }}">
+        <a href="{{ url_for('cadastrar_servico.cadastrar_servico') }}">
             <button>Cadastrar Serviço</button>
         </a>
-        <a href="{{ url_for('paginas.cadastrar_atividade') }}">
+        <a href="{{ url_for('cadastrar_atividade.cadastrar_atividade') }}">
             <button>Cadastrar Atividade</button>
         </a>
-        <a href="{{ url_for('paginas.admin_consultar_registros') }}">
+        <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
             <button>Consultar Registros</button>
         </a>
-        <a href="{{ url_for('paginas.admin_calcular_valor_mensal') }}">
+        <a href="{{ url_for('valor_a_receber.admin_calcular_valor_mensal') }}">
             <button>Valor a Pagar</button>
         </a>
     {% endif %}

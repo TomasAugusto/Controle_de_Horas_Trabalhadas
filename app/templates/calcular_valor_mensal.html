@@ -30,7 +30,7 @@
 
     <!-- Formulário de Filtros -->
     <div class="filtros">
-        <form method="GET" action="{{ url_for('paginas.calcular_valor_mensal') }}">
+        <form method="GET" action="{{ url_for('valor_a_receber.calcular_valor_mensal') }}">
             <label for="mes">Mês:</label>
             <select id="mes" name="mes">
                 {% for i in range(1, 13) %}

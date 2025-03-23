@@ -33,12 +33,12 @@
 </head>
 <body>
     <h1>Editar Cliente</h1>
-    <a href="{{ url_for('paginas.cadastrar_cliente') }}">
+    <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}">
         <button>Voltar</button>
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('paginas.salvar_edicao_cliente', id_cliente=cliente.IdCliente) }}">
+    <form method="POST" action="{{ url_for('cadastrar_cliente.salvar_edicao_cliente', id_cliente=cliente.IdCliente) }}">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" value="{{ cliente.Nome }}" required>
 

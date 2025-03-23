@@ -51,7 +51,7 @@
 
     <!-- Formulário de Filtros -->
     <div class="filtros">
-        <form method="GET" action="{{ url_for('paginas.admin_consultar_registros') }}">
+        <form method="GET" action="{{ url_for('consultar_registros.admin_consultar_registros') }}">
             <!-- Filtro de Colaborador -->
             <label for="colaborador">Colaborador:</label>
             <select id="colaborador" name="colaborador">
@@ -91,7 +91,7 @@
             </select>
 
             <button type="submit">Filtrar</button>
-            <a href="{{ url_for('paginas.admin_consultar_registros') }}">
+            <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
                 <button type="button">Limpar Filtros</button>
             </a>
         </form>
