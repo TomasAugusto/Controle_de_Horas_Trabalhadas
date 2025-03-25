@@ -4,45 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Registros (Admin)</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            cursor: pointer; /* Indica que o cabeçalho é clicável */
-        }
-        .filtros {
-            margin-bottom: 20px;
-        }
-        .filtros label {
-            margin-right: 10px;
-        }
-        .filtros input, .filtros select {
-            padding: 5px;
-            margin-right: 10px;
-        }
-        button {
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div class="container-principal">
     <h1>Consultar Registros (Admin)</h1>
     <a href="{{ url_for('paginas.home') }}">
         <button>Voltar</button>
@@ -62,7 +27,7 @@
                     </option>
                 {% endfor %}
             </select>
-
+            <br>
             <!-- Outros filtros -->
             <label for="data_inicio">Data Início:</label>
             <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
@@ -79,7 +44,7 @@
                     </option>
                 {% endfor %}
             </select>
-
+        
             <label for="pco">PCO:</label>
             <select id="pco" name="pco">
                 <option value="">Todos</option>
@@ -89,7 +54,7 @@
                     </option>
                 {% endfor %}
             </select>
-
+            <br>
             <button type="submit">Filtrar</button>
             <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
                 <button type="button">Limpar Filtros</button>
@@ -172,5 +137,17 @@
             });
         });
     </script>
+
+    <!-- Exibir mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div id="toast" class="toast">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </div>
 </body>
 </html>

@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div class="container-principal">
     <h2>Login</h2>
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
+
+    <!--{% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 <p style="color: red;">{{ message }}</p>
             {% endfor %}
         {% endif %}
     {% endwith %}
+    -->
     
     <form method="POST">
         <label>Usuário:</label>
@@ -24,5 +27,17 @@
         <br>
         <button type="submit">Entrar</button>
     </form>
+
+    <!-- Exibir mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div id="toast" class="toast">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </div>
 </body>
 </html>

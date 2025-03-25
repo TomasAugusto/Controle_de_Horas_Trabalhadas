@@ -4,24 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcular Valor Mensal</title>
-    <style>
-        .filtros {
-            margin-bottom: 20px;
-        }
-        .filtros label {
-            margin-right: 10px;
-        }
-        .filtros input, .filtros select {
-            padding: 5px;
-            margin-right: 10px;
-        }
-        .resultado {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div class="container-principal">
     <h1>Calcular Valor Mensal</h1>
     <a href="{{ url_for('paginas.home') }}">
         <button>Voltar</button>
@@ -51,6 +37,18 @@
         <p><strong>Total de Horas Trabalhadas:</strong> {{ "%.2f"|format(total_horas) }} horas</p>
         <p><strong>Valor Total a Receber:</strong> R$ {{ "%.2f"|format(valor_total) }}</p>
         <p><strong>Mês:</strong> {{ nome_mes }} de {{ ano }}</p>
+    </div>
+
+    <!-- Exibir mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div id="toast" class="toast">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>
