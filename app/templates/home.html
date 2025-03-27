@@ -7,66 +7,44 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div class="container-principal menu-centralizado">
+        <h1>Bem-vindo, {{ session['usuario_nome'] }}!</h1>
 
-    <div class="container-principal">
-        
-    
-    <h1>Bem-vindo, {{ session['usuario_nome'] }}!</h1>
+        <div class="botoes-menu">
+            <a href="{{ url_for('registrar_horas.registrar_horas') }}" class="botao-menu">Registrar Horas</a>
+            <a href="{{ url_for('consultar_registros.consultar_registros') }}" class="botao-menu">Consultar Registros</a>
+            <a href="{{ url_for('valor_a_receber.calcular_valor_mensal') }}" class="botao-menu">Valor a Receber</a>
+        </div>
 
-    <!-- Botões para todos os usuários -->
-    <a href="{{ url_for('registrar_horas.registrar_horas') }}">
-        <button>Registrar Horas</button>
-    </a>
-    <a href="{{ url_for('consultar_registros.consultar_registros') }}">
-        <button>Consultar Registros</button>
-    </a>
-    <a href="{{ url_for('valor_a_receber.calcular_valor_mensal') }}">
-        <button>Valor a Receber</button>
-    </a>
-
-    <!-- Botões apenas para administradores -->
-    {% if session['usuario_admin'] == 1 %}
-        <a href="{{ url_for('cadastrar_usuario.cadastrar_usuario') }}">
-            <button>Cadastrar Usuário</button>
-        </a>
-        <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}">
-            <button>Cadastrar Cliente</button>
-        </a>
-        <a href="{{ url_for('cadastrar_pco.cadastrar_pco') }}">
-            <button>Cadastrar PCO</button>
-        </a>
-        <a href="{{ url_for('cadastrar_setor.cadastrar_setor') }}">
-            <button>Cadastrar Setor</button>
-        </a>
-        <a href="{{ url_for('cadastrar_servico.cadastrar_servico') }}">
-            <button>Cadastrar Serviço</button>
-        </a>
-        <a href="{{ url_for('cadastrar_atividade.cadastrar_atividade') }}">
-            <button>Cadastrar Atividade</button>
-        </a>
-        <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
-            <button>Consultar Registros</button>
-        </a>
-        <a href="{{ url_for('valor_a_receber.admin_calcular_valor_mensal') }}">
-            <button>Valor a Pagar</button>
-        </a>
-    {% endif %}
-
-    <br><br>
-    <a href="{{ url_for('auth.logout') }}">
-        <button>Sair</button>
-    </a>
-
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
+        {% if session['usuario_admin'] == 1 %}
+        <div class="secao-admin">
+            <h2>Administradores</h2>
+            <div class="botoes-menu">
+                <a href="{{ url_for('cadastrar_usuario.cadastrar_usuario') }}" class="botao-menu">Cadastrar Usuário</a>
+                <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}" class="botao-menu">Cadastrar Cliente</a>
+                <a href="{{ url_for('cadastrar_pco.cadastrar_pco') }}" class="botao-menu">Cadastrar PCO</a>
+                <a href="{{ url_for('cadastrar_setor.cadastrar_setor') }}" class="botao-menu">Cadastrar Setor</a>
+                <a href="{{ url_for('cadastrar_servico.cadastrar_servico') }}" class="botao-menu">Cadastrar Serviço</a>
+                <a href="{{ url_for('cadastrar_atividade.cadastrar_atividade') }}" class="botao-menu">Cadastrar Atividade</a>
+                <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}" class="botao-menu">Consultar Registros</a>
+                <a href="{{ url_for('valor_a_receber.admin_calcular_valor_mensal') }}" class="botao-menu">Valor a Pagar</a>
+            </div>
+        </div>
         {% endif %}
-    {% endwith %}
+
+        <div class="botao-sair">
+            <a href="{{ url_for('auth.logout') }}" class="botao-menu">Sair</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
     
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    </div>
 </body>
 </html>

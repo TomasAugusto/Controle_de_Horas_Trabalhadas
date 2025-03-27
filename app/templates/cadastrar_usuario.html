@@ -14,7 +14,7 @@
     </a>
     <br><br>
 
-    <form method="POST" action="{{ url_for('cadastrar_usuario.salvar_usuario') }}">
+    <form method="POST" action="{{ url_for('cadastrar_usuario.salvar_usuario') }}" class="form-cadastro">
         <label for="usuario">Usuário:</label>
         <input type="text" id="usuario" name="usuario" required>
 
@@ -31,7 +31,7 @@
                 <option value="{{ setor.IdSetor }}">{{ setor.Nome }}</option>
             {% endfor %}
         </select>
-
+        
         <label for="administrador">Administrador:</label>
         <select id="administrador" name="administrador" required>
             <option value="0">Não</option>
