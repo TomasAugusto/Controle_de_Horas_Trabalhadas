@@ -8,84 +8,87 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Cadastrar Serviço</h1>
-    <a href="{{ url_for('paginas.home') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
-
-
-    <form method="POST" action="{{ url_for('cadastrar_servico.salvar_servico') }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
-
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required></textarea>
-
-        <label for="ativo">Ativo:</label>
-        <select id="ativo" name="ativo" required>
-            <option value="1">Sim</option>
-            <option value="0">Não</option>
-        </select>
-
-        <button type="submit">Salvar</button>
-    </form>
-
-    <h2>Serviços Cadastrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Ativo</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for servico in servicos %}
-                <tr>
-                    <td>{{ servico.IdServico }}</td>
-                    <td>{{ servico.Nome }}</td>
-                    <td>{{ servico.Descricao }}</td>
-                    <td>{{ 'Sim' if servico.Ativo else 'Não' }}</td>
-                    <td>
-                        <a href="{{ url_for('cadastrar_servico.editar_servico', id_servico=servico.IdServico) }}">
-                            <button>Editar</button>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <script>
-        // Função para exibir a mensagem flutuante
-        function showToast() {
-            var toast = document.getElementById("toast");
-            toast.classList.add("show");
-            setTimeout(function(){ toast.classList.remove("show"); }, 3000);
-        }
-
-        // Exibir a mensagem flutuante se houver mensagens flash
-        window.onload = function() {
-            var toast = document.getElementById("toast");
-            if (toast) {
-                showToast();
-            }
-        };
-    </script>
+        <h1>Cadastrar Serviço</h1>
+        <a href="{{ url_for('paginas.home') }}">
+            <button>Voltar</button>
+        </a>
+        <br>
+        <div class="cadastro">
     
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+            <form method="POST" action="{{ url_for('cadastrar_servico.salvar_servico') }}" class="form-cadastro">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+                <label for="ativo">Ativo:</label>
+                <select id="ativo" name="ativo" required>
+                    <option value="1">Sim</option>
+                    <option value="0">Não</option>
+                </select>
+
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+
+        <div class="resultado">
+            <h2>Serviços Cadastrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for servico in servicos %}
+                        <tr>
+                            <td>{{ servico.IdServico }}</td>
+                            <td>{{ servico.Nome }}</td>
+                            <td>{{ servico.Descricao }}</td>
+                            <td>{{ 'Sim' if servico.Ativo else 'Não' }}</td>
+                            <td>
+                                <a href="{{ url_for('cadastrar_servico.editar_servico', id_servico=servico.IdServico) }}">
+                                    <button>Editar</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <script>
+                // Função para exibir a mensagem flutuante
+                function showToast() {
+                    var toast = document.getElementById("toast");
+                    toast.classList.add("show");
+                    setTimeout(function(){ toast.classList.remove("show"); }, 3000);
+                }
+
+                // Exibir a mensagem flutuante se houver mensagens flash
+                window.onload = function() {
+                    var toast = document.getElementById("toast");
+                    if (toast) {
+                        showToast();
+                    }
+                };
+            </script>
+        </div>
+        
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>

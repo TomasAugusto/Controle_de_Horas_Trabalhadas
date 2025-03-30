@@ -7,37 +7,29 @@
 </head>
 <body>
     <div class="container-principal">
-    <h2>Login</h2>
-
-    <!--{% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: red;">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    -->
-    
-    <form method="POST">
-        <label>Usuário:</label>
-        <input type="text" name="usuario" required>
-        <br>
-        <label>Senha:</label>
-        <input type="password" name="senha" required>
-        <br>
-        <button type="submit">Entrar</button>
-    </form>
-
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <h2>Login</h2>
+        <div class="cadastro">
+            <form method="POST" class="form-cadastro">
+                <label>Usuário:</label>
+                <input type="text" name="usuario" required>
+                <br>
+                <label>Senha:</label>
+                <input type="password" name="senha" required>
+                <br>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+        
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>

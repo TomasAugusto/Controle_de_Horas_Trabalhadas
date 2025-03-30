@@ -8,67 +8,72 @@
 
 <body>
     <div class="container-principal">
-    <h1>Cadastrar Atividade</h1>
-    <a href="{{ url_for('paginas.home') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        
+            <h1>Cadastrar Atividade</h1>
+            <a href="{{ url_for('paginas.home') }}">
+                <button>Voltar</button>
+            </a>
+            <br><br>
 
-    
-    <form method="POST" action="{{ url_for('cadastrar_atividade.salvar_atividade') }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
+        <div class="cadastro">
+            <form method="POST" action="{{ url_for('cadastrar_atividade.salvar_atividade') }}" class="form-cadastro">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
-        <label for="ativo">Ativo:</label>
-        <select id="ativo" name="ativo" required>
-            <option value="1">Sim</option>
-            <option value="0">Não</option>
-        </select>
+                <label for="ativo">Ativo:</label>
+                <select id="ativo" name="ativo" required>
+                    <option value="1">Sim</option>
+                    <option value="0">Não</option>
+                </select>
 
-        <button type="submit">Salvar</button>
-    </form>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
 
-    <h2>Atividades Cadastradas</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Ativo</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for atividade in atividades %}
-                <tr>
-                    <td>{{ atividade.IdAtividade }}</td>
-                    <td>{{ atividade.Nome }}</td>
-                    <td>{{ atividade.Descricao }}</td>
-                    <td>{{ 'Sim' if atividade.Ativo else 'Não' }}</td>
-                    <td>
-                        <a href="{{ url_for('cadastrar_atividade.editar_atividade', id_atividade=atividade.IdAtividade) }}">
-                            <button>Editar</button>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="resultado">
+            <h2>Atividades Cadastradas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for atividade in atividades %}
+                        <tr>
+                            <td>{{ atividade.IdAtividade }}</td>
+                            <td>{{ atividade.Nome }}</td>
+                            <td>{{ atividade.Descricao }}</td>
+                            <td>{{ 'Sim' if atividade.Ativo else 'Não' }}</td>
+                            <td>
+                                <a href="{{ url_for('cadastrar_atividade.editar_atividade', id_atividade=atividade.IdAtividade) }}">
+                                    <button>Editar</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+            <!-- Exibir mensagens flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div id="toast" class="toast">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        
     </div>
 </body>
 </html>

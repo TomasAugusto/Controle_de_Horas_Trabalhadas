@@ -8,48 +8,50 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Editar PCO</h1>
-    <a href="{{ url_for('cadastrar_pco.cadastrar_pco') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        <h1>Editar PCO</h1>
+            <a href="{{ url_for('cadastrar_pco.cadastrar_pco') }}">
+                <button>Voltar</button>
+            </a>
+            <br>
+        <div class="cadastro">
 
-    <form method="POST" action="{{ url_for('cadastrar_pco.salvar_edicao_pco', id_pco=pco.IdPcoCliente) }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" value="{{ pco.Nome }}" required>
+            <form method="POST" action="{{ url_for('cadastrar_pco.salvar_edicao_pco', id_pco=pco.IdPcoCliente) }}" class="form-cadastro">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" value="{{ pco.Nome }}" required>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required>{{ pco.Descricao }}</textarea>
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required>{{ pco.Descricao }}</textarea>
 
-        <label for="cliente">Cliente:</label>
-        <select id="cliente" name="cliente" required>
-            <option value="">Selecione um cliente</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.IdCliente }}" {% if cliente.IdCliente == pco.IdCliente %}selected{% endif %}>
-                    {{ cliente.Nome }}
-                </option>
-            {% endfor %}
-        </select>
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <option value="">Selecione um cliente</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.IdCliente }}" {% if cliente.IdCliente == pco.IdCliente %}selected{% endif %}>
+                            {{ cliente.Nome }}
+                        </option>
+                    {% endfor %}
+                </select>
 
-        <label for="ativo">Ativo:</label>
-        <select id="ativo" name="ativo" required>
-            <option value="1" {% if pco.Ativo == 1 %}selected{% endif %}>Sim</option>
-            <option value="0" {% if pco.Ativo == 0 %}selected{% endif %}>Não</option>
-        </select>
+                <label for="ativo">Ativo:</label>
+                <select id="ativo" name="ativo" required>
+                    <option value="1" {% if pco.Ativo == 1 %}selected{% endif %}>Sim</option>
+                    <option value="0" {% if pco.Ativo == 0 %}selected{% endif %}>Não</option>
+                </select>
 
-        <button type="submit">Salvar Alterações</button>
-    </form>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
 
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>

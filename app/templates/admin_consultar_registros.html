@@ -8,146 +8,147 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Consultar Registros (Admin)</h1>
-    <a href="{{ url_for('paginas.home') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        <h1>Consultar Registros (Admin)</h1>
+        <a href="{{ url_for('paginas.home') }}">
+            <button>Voltar</button>
+        </a>
+        <br>
 
-    <!-- Formulário de Filtros -->
-    <div class="filtros">
-        <form method="GET" action="{{ url_for('consultar_registros.admin_consultar_registros') }}">
-            <!-- Filtro de Colaborador -->
-            <label for="colaborador">Colaborador:</label>
-            <select id="colaborador" name="colaborador">
-                <option value="">Todos</option>
-                {% for colaborador in colaboradores %}
-                    <option value="{{ colaborador.IdUsuario }}" {% if request.args.get('colaborador') == colaborador.IdUsuario|string %}selected{% endif %}>
-                        {{ colaborador.Usuario }}
-                    </option>
-                {% endfor %}
-            </select>
-            <br>
-            <!-- Outros filtros -->
-            <div></div><label for="data_inicio">Data Início:</label>
-            <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
+        <!-- Formulário de Filtros -->
+        <div class="filtros">
+            <form method="GET" action="{{ url_for('consultar_registros.admin_consultar_registros') }}">
+                <!-- Filtro de Colaborador -->
+                <label for="colaborador">Colaborador:</label>
+                <select id="colaborador" name="colaborador">
+                    <option value="">Todos</option>
+                    {% for colaborador in colaboradores %}
+                        <option value="{{ colaborador.IdUsuario }}" {% if request.args.get('colaborador') == colaborador.IdUsuario|string %}selected{% endif %}>
+                            {{ colaborador.Usuario }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <br>
+                <!-- Outros filtros -->
+                <div></div><label for="data_inicio">Data Início:</label>
+                <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
 
-            <label for="data_fim">Data Fim:</label>
-            <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}">
+                <label for="data_fim">Data Fim:</label>
+                <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}">
 
-            <label for="cliente">Cliente:</label>
-            <select id="cliente" name="cliente">
-                <option value="">Todos</option>
-                {% for cliente in clientes %}
-                    <option value="{{ cliente.IdCliente }}" {% if request.args.get('cliente') == cliente.IdCliente|string %}selected{% endif %}>
-                        {{ cliente.Nome }}
-                    </option>
-                {% endfor %}
-            </select>
-        
-            <label for="pco">PCO:</label>
-            <select id="pco" name="pco">
-                <option value="">Todos</option>
-                {% for pco in pcos %}
-                    <option value="{{ pco.IdPcoCliente }}" {% if request.args.get('pco') == pco.IdPcoCliente|string %}selected{% endif %}>
-                        {{ pco.Nome }}
-                    </option>
-                {% endfor %}
-            </select>
-            <br>
-            <button type="submit">Filtrar</button>
-            <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
-                <button type="button">Limpar Filtros</button>
-            </a>
-        </form>
-    </div>
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente">
+                    <option value="">Todos</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.IdCliente }}" {% if request.args.get('cliente') == cliente.IdCliente|string %}selected{% endif %}>
+                            {{ cliente.Nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            
+                <label for="pco">PCO:</label>
+                <select id="pco" name="pco">
+                    <option value="">Todos</option>
+                    {% for pco in pcos %}
+                        <option value="{{ pco.IdPcoCliente }}" {% if request.args.get('pco') == pco.IdPcoCliente|string %}selected{% endif %}>
+                            {{ pco.Nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <br>
+                <button type="submit">Filtrar</button>
+                <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
+                    <button type="button">Limpar Filtros</button>
+                </a>
+            </form>
+        </div>
 
-    <!-- Tabela de Registros -->
-    <table>
-        <thead>
-            <tr>
-                <th>Colaborador</th>
-                <th>Data</th>
-                <th>Hora Início</th>
-                <th>Hora Fim</th>
-                <th>Cliente</th>
-                <th>PCO</th>
-                <th>Serviço</th>
-                <th>Atividade</th>
-                <th>Tipo de Hora</th>
-                <th>Descrição</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for registro in registros %}
-                <tr>
-                    <td>{{ registro.Colaborador }}</td>
-                    <td>{{ registro.DataRegistro.strftime('%d/%m/%Y') }}</td>
-                    <td>{{ registro.HoraInicio }}</td>
-                    <td>{{ registro.HoraFim }}</td>
-                    <td>{{ registro.Cliente }}</td>
-                    <td>{{ registro.PcoCliente }}</td>
-                    <td>{{ registro.Servico }}</td>
-                    <td>{{ registro.Atividade }}</td>
-                    <td>{{ registro.TipoHora }}</td>
-                    <td>{{ registro.Descricao }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <!-- Tabela de Registros -->
+        <div class="resultado">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colaborador</th>
+                        <th>Data</th>
+                        <th>Hora Início</th>
+                        <th>Hora Fim</th>
+                        <th>Cliente</th>
+                        <th>PCO</th>
+                        <th>Serviço</th>
+                        <th>Atividade</th>
+                        <th>Tipo de Hora</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                        <tr>
+                            <td>{{ registro.Colaborador }}</td>
+                            <td>{{ registro.DataRegistro.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ registro.HoraInicio }}</td>
+                            <td>{{ registro.HoraFim }}</td>
+                            <td>{{ registro.Cliente }}</td>
+                            <td>{{ registro.PcoCliente }}</td>
+                            <td>{{ registro.Servico }}</td>
+                            <td>{{ registro.Atividade }}</td>
+                            <td>{{ registro.TipoHora }}</td>
+                            <td>{{ registro.Descricao }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Script de ordenação -->
+        <script>
+            function sortTable(columnIndex) {
+                const table = document.querySelector('table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
 
-    <!-- Script de ordenação -->
-    <script>
-        function sortTable(columnIndex) {
-            const table = document.querySelector('table');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
+                // Verifica se a coluna já está ordenada (ascendente ou descendente)
+                const isAscending = table.getAttribute('data-sort-asc') === 'true';
+                table.setAttribute('data-sort-asc', !isAscending);
 
-            // Verifica se a coluna já está ordenada (ascendente ou descendente)
-            const isAscending = table.getAttribute('data-sort-asc') === 'true';
-            table.setAttribute('data-sort-asc', !isAscending);
+                // Ordena as linhas com base no conteúdo da coluna
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.cells[columnIndex].textContent.trim();
+                    const cellB = rowB.cells[columnIndex].textContent.trim();
 
-            // Ordena as linhas com base no conteúdo da coluna
-            rows.sort((rowA, rowB) => {
-                const cellA = rowA.cells[columnIndex].textContent.trim();
-                const cellB = rowB.cells[columnIndex].textContent.trim();
+                    if (isAscending) {
+                        return cellA.localeCompare(cellB);
+                    } else {
+                        return cellB.localeCompare(cellA);
+                    }
+                });
 
-                if (isAscending) {
-                    return cellA.localeCompare(cellB);
-                } else {
-                    return cellB.localeCompare(cellA);
+                // Remove as linhas atuais da tabela
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
                 }
-            });
 
-            // Remove as linhas atuais da tabela
-            while (tbody.firstChild) {
-                tbody.removeChild(tbody.firstChild);
+                // Adiciona as linhas ordenadas de volta à tabela
+                rows.forEach(row => tbody.appendChild(row));
             }
 
-            // Adiciona as linhas ordenadas de volta à tabela
-            rows.forEach(row => tbody.appendChild(row));
-        }
-
-        // Adiciona eventos de clique aos cabeçalhos das colunas
-        document.addEventListener('DOMContentLoaded', () => {
-            const headers = document.querySelectorAll('th');
-            headers.forEach((header, index) => {
-                header.style.cursor = 'pointer'; // Muda o cursor para indicar que é clicável
-                header.addEventListener('click', () => sortTable(index));
+            // Adiciona eventos de clique aos cabeçalhos das colunas
+            document.addEventListener('DOMContentLoaded', () => {
+                const headers = document.querySelectorAll('th');
+                headers.forEach((header, index) => {
+                    header.style.cursor = 'pointer'; // Muda o cursor para indicar que é clicável
+                    header.addEventListener('click', () => sortTable(index));
+                });
             });
-        });
-    </script>
+        </script>
 
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>

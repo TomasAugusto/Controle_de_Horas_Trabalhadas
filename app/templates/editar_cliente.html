@@ -8,38 +8,40 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Editar Cliente</h1>
-    <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        <h1>Editar Cliente</h1>
+            <a href="{{ url_for('cadastrar_cliente.cadastrar_cliente') }}">
+                <button>Voltar</button>
+            </a>
+            <br>
+        <div class="cadastro">
 
-    <form method="POST" action="{{ url_for('cadastrar_cliente.salvar_edicao_cliente', id_cliente=cliente.IdCliente) }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" value="{{ cliente.Nome }}" required>
+            <form method="POST" action="{{ url_for('cadastrar_cliente.salvar_edicao_cliente', id_cliente=cliente.IdCliente) }}" class="form-cadastro">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" value="{{ cliente.Nome }}" required>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required>{{ cliente.Descricao }}</textarea>
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required>{{ cliente.Descricao }}</textarea>
 
-        <label for="ativo">Ativo:</label>
-        <select id="ativo" name="ativo" required>
-            <option value="1" {% if cliente.Ativo == 1 %}selected{% endif %}>Sim</option>
-            <option value="0" {% if cliente.Ativo == 0 %}selected{% endif %}>Não</option>
-        </select>
+                <label for="ativo">Ativo:</label>
+                <select id="ativo" name="ativo" required>
+                    <option value="1" {% if cliente.Ativo == 1 %}selected{% endif %}>Sim</option>
+                    <option value="0" {% if cliente.Ativo == 0 %}selected{% endif %}>Não</option>
+                </select>
 
-        <button type="submit">Salvar Alterações</button>
-    </form>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
 
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>

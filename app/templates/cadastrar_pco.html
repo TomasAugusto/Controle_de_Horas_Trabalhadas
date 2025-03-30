@@ -8,76 +8,81 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Cadastrar PCO</h1>
-    <a href="{{ url_for('paginas.home') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        <h1>Cadastrar PCO</h1>
+            <a href="{{ url_for('paginas.home') }}">
+                <button>Voltar</button>
+            </a>
+            <br>
+        <div class="cadastro">
 
-    <form method="POST" action="{{ url_for('cadastrar_pco.salvar_pco') }}">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
+            <form method="POST" action="{{ url_for('cadastrar_pco.salvar_pco') }}" class="form-cadastro">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
-        <label for="cliente">Cliente:</label>
-        <select id="cliente" name="cliente" required>
-            <option value="">Selecione um cliente</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
-            {% endfor %}
-        </select>
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <option value="">Selecione um cliente</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
+                    {% endfor %}
+                </select>
 
-        <label for="ativo">Ativo:</label>
-        <select id="ativo" name="ativo" required>
-            <option value="1">Sim</option>
-            <option value="0">Não</option>
-        </select>
+                <label for="ativo">Ativo:</label>
+                <select id="ativo" name="ativo" required>
+                    <option value="1">Sim</option>
+                    <option value="0">Não</option>
+                </select>
 
-        <button type="submit">Salvar</button>
-    </form>
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
 
-    <h2>PCOs Cadastrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Cliente</th>
-                <th>Ativo</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pco in pcos %}
-                <tr>
-                    <td>{{ pco.IdPcoCliente }}</td>
-                    <td>{{ pco.Nome }}</td>
-                    <td>{{ pco.Descricao }}</td>
-                    <td>{{ pco.Cliente }}</td>
-                    <td>{{ 'Sim' if pco.Ativo else 'Não' }}</td>
-                    <td>
-                        <a href="{{ url_for('cadastrar_pco.editar_pco', id_pco=pco.IdPcoCliente) }}">
-                            <button>Editar</button>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="resultado">
+            <h2>PCOs Cadastrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Cliente</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pco in pcos %}
+                        <tr>
+                            <td>{{ pco.IdPcoCliente }}</td>
+                            <td>{{ pco.Nome }}</td>
+                            <td>{{ pco.Descricao }}</td>
+                            <td>{{ pco.Cliente }}</td>
+                            <td>{{ 'Sim' if pco.Ativo else 'Não' }}</td>
+                            <td>
+                                <a href="{{ url_for('cadastrar_pco.editar_pco', id_pco=pco.IdPcoCliente) }}">
+                                    <button>Editar</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+            <!-- Exibir mensagens flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div id="toast" class="toast">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        
     </div>
 </body>
 </html>

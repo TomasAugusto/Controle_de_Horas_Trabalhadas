@@ -8,137 +8,135 @@
 </head>
 <body>
     <div class="container-principal">
-    <h1>Registrar Horas</h1>
-    <a href="{{ url_for('paginas.home') }}">
-        <button>Voltar</button>
-    </a>
-    <br><br>
+        <h1>Registrar Horas</h1>
+            <a href="{{ url_for('paginas.home') }}">
+                <button>Voltar</button>
+            </a>
+            <br>
+        <div class="cadastro">
+            <form method="POST" action="{{ url_for('registrar_horas.salvar_registro') }}" class="form-cadastro">
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" required>
 
-    
+                <label for="hora_inicio">Hora de Início:</label>
+                <input type="time" id="hora_inicio" name="hora_inicio" required>
 
-    <form method="POST" action="{{ url_for('registrar_horas.salvar_registro') }}">
-        <label for="data">Data:</label>
-        <input type="date" id="data" name="data" required>
+                <label for="hora_fim">Hora de Fim:</label>
+                <input type="time" id="hora_fim" name="hora_fim" required>
 
-        <label for="hora_inicio">Hora de Início:</label>
-        <input type="time" id="hora_inicio" name="hora_inicio" required>
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required onchange="carregarPcos(this.value)">
+                    <option value="">Selecione um cliente</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
+                    {% endfor %}
+                </select>
 
-        <label for="hora_fim">Hora de Fim:</label>
-        <input type="time" id="hora_fim" name="hora_fim" required>
+                <label for="pco">PCO:</label>
+                <select id="pco" name="pco" required>
+                    <option value="">Selecione um PCO</option>
+                    <!-- Os PCOs serão carregados dinamicamente aqui -->
+                </select>
 
-        <label for="cliente">Cliente:</label>
-        <select id="cliente" name="cliente" required onchange="carregarPcos(this.value)">
-            <option value="">Selecione um cliente</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.IdCliente }}">{{ cliente.Nome }}</option>
-            {% endfor %}
-        </select>
+                <label for="servico">Serviço:</label>
+                <select id="servico" name="servico" required>
+                    <option value="">Selecione um serviço</option>
+                    {% for servico in servicos %}
+                        <option value="{{ servico.IdServico }}">{{ servico.Nome }}</option>
+                    {% endfor %}
+                </select>
 
-        <label for="pco">PCO:</label>
-        <select id="pco" name="pco" required>
-            <option value="">Selecione um PCO</option>
-            <!-- Os PCOs serão carregados dinamicamente aqui -->
-        </select>
+                <label for="tipo_hora">Tipo de Hora:</label>
+                <select id="tipo_hora" name="tipo_hora" required>
+                    <option value="">Selecione um tipo de hora</option>
+                    {% for tipo in tipos_horas %}
+                        <option value="{{ tipo.IdTipoHora }}">{{ tipo.Nome }}</option>
+                    {% endfor %}
+                </select>
 
-        <label for="servico">Serviço:</label>
-        <select id="servico" name="servico" required>
-            <option value="">Selecione um serviço</option>
-            {% for servico in servicos %}
-                <option value="{{ servico.IdServico }}">{{ servico.Nome }}</option>
-            {% endfor %}
-        </select>
+                <label for="atividade">Atividade:</label>
+                <select id="atividade" name="atividade" required>
+                    <option value="">Selecione uma atividade</option>
+                    {% for atividade in atividades %}
+                        <option value="{{ atividade.IdAtividade }}">{{ atividade.Nome }}</option>
+                    {% endfor %}
+                </select>
 
-        <label for="tipo_hora">Tipo de Hora:</label>
-        <select id="tipo_hora" name="tipo_hora" required>
-            <option value="">Selecione um tipo de hora</option>
-            {% for tipo in tipos_horas %}
-                <option value="{{ tipo.IdTipoHora }}">{{ tipo.Nome }}</option>
-            {% endfor %}
-        </select>
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
-        <label for="atividade">Atividade:</label>
-        <select id="atividade" name="atividade" required>
-            <option value="">Selecione uma atividade</option>
-            {% for atividade in atividades %}
-                <option value="{{ atividade.IdAtividade }}">{{ atividade.Nome }}</option>
-            {% endfor %}
-        </select>
+                <button type="submit">Salvar</button>
+            </form>
 
-        <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+            <script>
+                // Função para formatar a data no formato YYYY-MM-DD
+                function formatarData(data) {
+                    const ano = data.getFullYear();
+                    const mes = String(data.getMonth() + 1).padStart(2, '0');
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    return `${ano}-${mes}-${dia}`;
+                }
 
-        <button type="submit">Salvar</button>
-    </form>
+                // Função para formatar a hora no formato HH:MM
+                function formatarHora(data) {
+                    const horas = String(data.getHours()).padStart(2, '0');
+                    const minutos = String(data.getMinutes()).padStart(2, '0');
+                    return `${horas}:${minutos}`;
+                }
 
-    <script>
-        // Função para formatar a data no formato YYYY-MM-DD
-        function formatarData(data) {
-            const ano = data.getFullYear();
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const dia = String(data.getDate()).padStart(2, '0');
-            return `${ano}-${mes}-${dia}`;
-        }
+                // Definir a data atual no campo de data
+                const campoData = document.getElementById('data');
+                const dataAtual = new Date();
+                campoData.value = formatarData(dataAtual);
 
-        // Função para formatar a hora no formato HH:MM
-        function formatarHora(data) {
-            const horas = String(data.getHours()).padStart(2, '0');
-            const minutos = String(data.getMinutes()).padStart(2, '0');
-            return `${horas}:${minutos}`;
-        }
+                // Definir a hora de início como 07:00
+                const campoHoraInicio = document.getElementById('hora_inicio');
+                campoHoraInicio.value = '07:00';
 
-        // Definir a data atual no campo de data
-        const campoData = document.getElementById('data');
-        const dataAtual = new Date();
-        campoData.value = formatarData(dataAtual);
+                // Definir a hora de fim como a hora atual
+                const campoHoraFim = document.getElementById('hora_fim');
+                campoHoraFim.value = formatarHora(dataAtual);
 
-        // Definir a hora de início como 07:00
-        const campoHoraInicio = document.getElementById('hora_inicio');
-        campoHoraInicio.value = '07:00';
+                // Impedir a seleção de datas futuras
+                campoData.max = formatarData(dataAtual);
 
-        // Definir a hora de fim como a hora atual
-        const campoHoraFim = document.getElementById('hora_fim');
-        campoHoraFim.value = formatarHora(dataAtual);
+                // Definir o tipo de hora como "Normal" (supondo que o valor correspondente seja 1)
+                const campoTipoHora = document.getElementById('tipo_hora');
+                campoTipoHora.value = '1'; // Substitua '1' pelo valor correto do tipo "Normal"
 
-        // Impedir a seleção de datas futuras
-        campoData.max = formatarData(dataAtual);
+                // Função para carregar PCOs com base no cliente selecionado
+                function carregarPcos(idCliente) {
+                    if (!idCliente) {
+                        document.getElementById('pco').innerHTML = '<option value="">Selecione um PCO</option>';
+                        return;
+                    }
 
-        // Definir o tipo de hora como "Normal" (supondo que o valor correspondente seja 1)
-        const campoTipoHora = document.getElementById('tipo_hora');
-        campoTipoHora.value = '1'; // Substitua '1' pelo valor correto do tipo "Normal"
+                    fetch(`/pcos_por_cliente/${idCliente}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const selectPco = document.getElementById('pco');
+                            selectPco.innerHTML = '<option value="">Selecione um PCO</option>';
+                            data.forEach(pco => {
+                                const option = document.createElement('option');
+                                option.value = pco.IdPcoCliente;
+                                option.textContent = pco.Nome;
+                                selectPco.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error('Erro ao carregar PCOs:', error));
+                }
+            </script>
+        </div>
+        <!-- Exibir mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="toast" class="toast">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-        // Função para carregar PCOs com base no cliente selecionado
-        function carregarPcos(idCliente) {
-            if (!idCliente) {
-                document.getElementById('pco').innerHTML = '<option value="">Selecione um PCO</option>';
-                return;
-            }
-
-            fetch(`/pcos_por_cliente/${idCliente}`)
-                .then(response => response.json())
-                .then(data => {
-                    const selectPco = document.getElementById('pco');
-                    selectPco.innerHTML = '<option value="">Selecione um PCO</option>';
-                    data.forEach(pco => {
-                        const option = document.createElement('option');
-                        option.value = pco.IdPcoCliente;
-                        option.textContent = pco.Nome;
-                        selectPco.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Erro ao carregar PCOs:', error));
-        }
-    </script>
-
-    <!-- Exibir mensagens flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="toast" class="toast">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
 </body>
 </html>
