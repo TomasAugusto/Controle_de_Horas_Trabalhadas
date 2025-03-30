@@ -15,7 +15,7 @@
         <br>
 
         <!-- Formulário de Filtros -->
-        <div class="filtros">
+        <div class="filtros_registros">
             <form method="GET" action="{{ url_for('consultar_registros.admin_consultar_registros') }}">
                 <!-- Filtro de Colaborador -->
                 <label for="colaborador">Colaborador:</label>
@@ -27,9 +27,9 @@
                         </option>
                     {% endfor %}
                 </select>
-                <br>
+                
                 <!-- Outros filtros -->
-                <div></div><label for="data_inicio">Data Início:</label>
+                <label for="data_inicio">Data Início:</label>
                 <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
 
                 <label for="data_fim">Data Fim:</label>
