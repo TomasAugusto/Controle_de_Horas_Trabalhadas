@@ -53,24 +53,36 @@ def salvar_usuario():
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Insere o novo usuário na tabela Usuarios
-    query = """
-    INSERT INTO Usuarios (
-        Usuario, Senha, ValorHora, Setor, Administrador, DataCadastro, Ativo
-    ) VALUES (?, ?, ?, ?, ?, GETDATE(), ?)
-    """
     try:
+        # Verifica se já existe um usuário com o mesmo login
+        cursor.execute("SELECT IdUsuario FROM Usuarios WHERE Usuario = ?", (usuario,))
+        usuario_existente = cursor.fetchone()
+        
+        if usuario_existente:
+            flash('Já existe um usuário cadastrado com este nome de login!', 'error')
+            return redirect(url_for('cadastrar_usuario.cadastrar_usuario'))
+
+        # Insere o novo usuário na tabela Usuarios
+        query = """
+        INSERT INTO Usuarios (
+            Usuario, Senha, ValorHora, Setor, Administrador, DataCadastro, Ativo
+        ) VALUES (?, ?, ?, ?, ?, GETDATE(), ?)
+        """
         cursor.execute(query, (usuario, senha, valor_hora, setor, administrador, ativo))
         conn.commit()
         flash('Usuário cadastrado com sucesso!', 'success')
     except pyodbc.IntegrityError as e:
         conn.rollback()
         flash('Erro ao cadastrar o usuário. Verifique os dados e tente novamente.', 'error')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao cadastrar o usuário: {str(e)}', 'error')
     finally:
         cursor.close()
         conn.close()
 
     return redirect(url_for('cadastrar_usuario.cadastrar_usuario'))
+
 
 
 @cadastrar_usuario_bp.route('/editar_usuario/<int:id_usuario>', methods=['GET'])
@@ -104,6 +116,7 @@ def editar_usuario(id_usuario):
     # Passa os dados para o template
     return render_template('editar_usuario.html', setores=setores, usuario=usuario)
 
+
 @cadastrar_usuario_bp.route('/salvar_edicao_usuario/<int:id_usuario>', methods=['POST'])
 def salvar_edicao_usuario(id_usuario):
     if 'usuario_id' not in session or session['usuario_admin'] != 1:
@@ -121,26 +134,42 @@ def salvar_edicao_usuario(id_usuario):
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Atualiza o usuário na tabela Usuarios
-    if senha:
-        query = """
-        UPDATE Usuarios
-        SET Usuario = ?, Senha = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
-        WHERE IdUsuario = ?
-        """
-        cursor.execute(query, (usuario, senha, valor_hora, setor, administrador, ativo, id_usuario))
-    else:
-        query = """
-        UPDATE Usuarios
-        SET Usuario = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
-        WHERE IdUsuario = ?
-        """
-        cursor.execute(query, (usuario, valor_hora, setor, administrador, ativo, id_usuario))
+    try:
+        # Verifica se já existe outro usuário com o mesmo login (excluindo o atual)
+        cursor.execute("""
+            SELECT IdUsuario FROM Usuarios 
+            WHERE Usuario = ? AND IdUsuario != ?
+        """, (usuario, id_usuario))
+        usuario_existente = cursor.fetchone()
+        
+        if usuario_existente:
+            flash('Já existe outro usuário cadastrado com este nome de login!', 'error')
+            return redirect(url_for('cadastrar_usuario.editar_usuario', id_usuario=id_usuario))
 
-    conn.commit()
-    cursor.close()
-    conn.close()
+        # Atualiza o usuário na tabela Usuarios
+        if senha:
+            query = """
+            UPDATE Usuarios
+            SET Usuario = ?, Senha = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
+            WHERE IdUsuario = ?
+            """
+            cursor.execute(query, (usuario, senha, valor_hora, setor, administrador, ativo, id_usuario))
+        else:
+            query = """
+            UPDATE Usuarios
+            SET Usuario = ?, ValorHora = ?, Setor = ?, Administrador = ?, Ativo = ?
+            WHERE IdUsuario = ?
+            """
+            cursor.execute(query, (usuario, valor_hora, setor, administrador, ativo, id_usuario))
 
-    flash('Usuário atualizado com sucesso!', 'success')
+        conn.commit()
+        flash('Usuário atualizado com sucesso!', 'success')
+    except pyodbc.Error as e:
+        conn.rollback()
+        flash(f'Erro ao atualizar o usuário: {str(e)}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+
     return redirect(url_for('cadastrar_usuario.cadastrar_usuario'))
 

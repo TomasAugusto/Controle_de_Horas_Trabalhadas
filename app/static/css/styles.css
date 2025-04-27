@@ -63,6 +63,108 @@ body {
     margin: 20px 0;
 }
 
+.logo {
+	display: block;
+    margin: 0 auto;
+    max-width: 70%;
+    height: auto;
+	
+}
+
+
+/* Container menor para menus centralizados */
+.container-menu-centralizado {
+    background-color: #fff;
+    width: 500px; /* Largura reduzida */
+    max-width: 95%; /* Responsivo em telas pequenas */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 20px auto;
+    text-align: center; /* Centraliza o texto */
+    box-sizing: border-box;
+}
+
+/* Estilos para títulos no container menor */
+.container-menu-centralizado h1 {
+    color: #333;
+    margin-bottom: 25px; /* Espaço um pouco menor */
+    font-size: 1.8rem; /* Tamanho ajustado */
+}
+
+.container-menu-centralizado h2 {
+    color: #444;
+    margin: 25px 0 15px;
+    font-size: 1.4rem;
+}
+
+/* Grupo de botões ajustado */
+.container-menu-centralizado .botoes-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Espaço menor entre botões */
+    margin: 15px 0; /* Margens reduzidas */
+}
+
+/* Botões com largura proporcional ao container menor */
+.container-menu-centralizado .botao-menu {
+    width: 80%; /* Ocupa 80% do container menor */
+    max-width: 300px; /* Mas não ultrapassa 300px */
+    padding: 10px 15px; /* Padding um pouco menor */
+}
+
+/* Ajustes para telas pequenas */
+@media (max-width: 600px) {
+    .container-menu-centralizado {
+        width: 95%;
+        padding: 20px 15px;
+    }
+    
+    .container-menu-centralizado .botao-menu {
+        width: 100%; /* Ocupa toda a largura em mobile */
+    }
+}
+
+
+
+
+
+
+/* Container de tamanho fixo (novo) */
+.container-medio {
+    background-color: #fff;
+    width: 700px; /* Largura fixa intermediária */
+    max-width: 95%; /* Máximo da tela em dispositivos pequenos */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+/* Versão estreita do container */
+.container-pequeno {
+    width: 500px; /* Largura fixa menor */
+    max-width: 95%;
+}
+
+/* Versão para formulários */
+.container-formulario {
+    width: 600px;
+    max-width: 95%;
+}
+
+/* Ajustes para telas pequenas */
+@media (max-width: 768px) {
+    .container-medio,
+    .container-pequeno,
+    .container-formulario {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
 /* NOVO: Estilo específico para botões do menu */
 .botao-menu {
     display: block;
@@ -263,6 +365,7 @@ tr:hover {
 .filtros button[type="submit"]:hover {
     background-color: #1e7c94;
 }
+
 
 /* ===== ESTILO PARA FILTROS REGISTROS ===== */
 .filtros_registros {

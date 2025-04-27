@@ -44,13 +44,21 @@ def salvar_cliente():
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Insere o novo cliente na tabela Clientes
-    query = """
-    INSERT INTO Clientes (
-        Nome, Descricao, IdUsuarioCadastro, Ativo
-    ) VALUES (?, ?, ?, ?)
-    """
     try:
+        # Verifica se já existe um cliente com o mesmo nome
+        cursor.execute("SELECT IdCliente FROM Clientes WHERE Nome = ?", (nome,))
+        cliente_existente = cursor.fetchone()
+        
+        if cliente_existente:
+            flash('Já existe um cliente cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_cliente.cadastrar_cliente'))
+
+        # Insere o novo cliente na tabela Clientes
+        query = """
+        INSERT INTO Clientes (
+            Nome, Descricao, IdUsuarioCadastro, Ativo
+        ) VALUES (?, ?, ?, ?)
+        """
         cursor.execute(query, (nome, descricao, session['usuario_id'], ativo))
         conn.commit()
         flash('Cliente cadastrado com sucesso!', 'success')
@@ -105,13 +113,24 @@ def salvar_edicao_cliente(id_cliente):
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Atualiza o cliente na tabela Clientes
-    query = """
-    UPDATE Clientes
-    SET Nome = ?, Descricao = ?, Ativo = ?
-    WHERE IdCliente = ?
-    """
     try:
+        # Verifica se já existe outro cliente com o mesmo nome (excluindo o próprio)
+        cursor.execute("""
+            SELECT IdCliente FROM Clientes 
+            WHERE Nome = ? AND IdCliente != ?
+        """, (nome, id_cliente))
+        cliente_existente = cursor.fetchone()
+        
+        if cliente_existente:
+            flash('Já existe outro cliente cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_cliente.editar_cliente', id_cliente=id_cliente))
+
+        # Atualiza o cliente na tabela Clientes
+        query = """
+        UPDATE Clientes
+        SET Nome = ?, Descricao = ?, Ativo = ?
+        WHERE IdCliente = ?
+        """
         cursor.execute(query, (nome, descricao, ativo, id_cliente))
         conn.commit()
         flash('Cliente atualizado com sucesso!', 'success')

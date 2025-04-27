@@ -7,7 +7,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container-principal menu-centralizado">
+    <div class="container-menu-centralizado">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BCM" class="logo">
+        </div>
         <h1>Bem-vindo, {{ session['usuario_nome'] }}!</h1>
 
         <div class="botoes-menu">

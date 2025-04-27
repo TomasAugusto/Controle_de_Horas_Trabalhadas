@@ -7,13 +7,13 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container-principal">
-        <h1>Calcular Valor Mensal</h1>
+    <div class="container-medio">
+        <h1>Calcular Valor a Receber</h1>
         <a href="{{ url_for('paginas.home') }}">
             <button>Voltar</button>
         </a>
         <br><br>
-
+        <!-- Formulário de Filtros -->
         <div class="filtros">
             <form method="GET" action="{{ url_for('valor_a_receber.calcular_valor_mensal') }}">
                 <label for="mes">Mês:</label>

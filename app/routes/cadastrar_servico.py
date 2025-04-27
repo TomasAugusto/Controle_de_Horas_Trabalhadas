@@ -43,13 +43,21 @@ def salvar_servico():
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Insere o novo serviço na tabela Servicos
-    query = """
-    INSERT INTO Servicos (
-        Nome, Descricao, Ativo
-    ) VALUES (?, ?, ?)
-    """
     try:
+        # Verifica se já existe um serviço com o mesmo nome
+        cursor.execute("SELECT IdServico FROM Servicos WHERE Nome = ?", (nome,))
+        servico_existente = cursor.fetchone()
+        
+        if servico_existente:
+            flash('Já existe um serviço cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_servico.cadastrar_servico'))
+
+        # Insere o novo serviço na tabela Servicos
+        query = """
+        INSERT INTO Servicos (
+            Nome, Descricao, Ativo
+        ) VALUES (?, ?, ?)
+        """
         cursor.execute(query, (nome, descricao, ativo))
         conn.commit()
         flash('Serviço cadastrado com sucesso!', 'success')
@@ -61,6 +69,8 @@ def salvar_servico():
         conn.close()
 
     return redirect(url_for('cadastrar_servico.cadastrar_servico'))
+
+
 
 
 @cadastrar_servico_bp.route('/editar_servico/<int:id_servico>', methods=['GET'])
@@ -105,13 +115,24 @@ def salvar_edicao_servico(id_servico):
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Atualiza o serviço na tabela Servicos
-    query = """
-    UPDATE Servicos
-    SET Nome = ?, Descricao = ?, Ativo = ?
-    WHERE IdServico = ?
-    """
     try:
+        # Verifica se já existe outro serviço com o mesmo nome (excluindo o atual)
+        cursor.execute("""
+            SELECT IdServico FROM Servicos 
+            WHERE Nome = ? AND IdServico != ?
+        """, (nome, id_servico))
+        servico_existente = cursor.fetchone()
+        
+        if servico_existente:
+            flash('Já existe outro serviço cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_servico.editar_servico', id_servico=id_servico))
+
+        # Atualiza o serviço na tabela Servicos
+        query = """
+        UPDATE Servicos
+        SET Nome = ?, Descricao = ?, Ativo = ?
+        WHERE IdServico = ?
+        """
         cursor.execute(query, (nome, descricao, ativo, id_servico))
         conn.commit()
         flash('Serviço atualizado com sucesso!', 'success')

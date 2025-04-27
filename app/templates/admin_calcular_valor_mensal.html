@@ -7,8 +7,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container-principal">
-        <h1>Calcular Valor Mensal (Admin)</h1>
+    <div class="container-medio">
+        <h1>Calcular Valor Mensal Para Pagamentos</h1>
         <a href="{{ url_for('paginas.home') }}">
             <button>Voltar</button>
         </a>
@@ -17,35 +17,29 @@
         <!-- Formulário de Filtros -->
         <div class="filtros">
             <form method="GET" action="{{ url_for('valor_a_receber.admin_calcular_valor_mensal') }}">
-                <div>
-                    <label for="usuario">Colaborador</label>
-                    <select id="usuario" name="usuario">
-                        <option value="">Selecione um colaborador</option>
-                        {% for usuario in usuarios %}
-                            <option value="{{ usuario.IdUsuario }}" {% if usuario.IdUsuario|string == usuario_id|string %}selected{% endif %}>
-                                {{ usuario.Usuario }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="mes">Mês</label>
-                    <select id="mes" name="mes">
-                        {% for i in range(1, 13) %}
-                            <option value="{{ i }}" {% if i == mes %}selected{% endif %}>{{ meses[i - 1] }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="ano">Ano</label>
-                    <input type="number" id="ano" name="ano" value="{{ ano }}" min="2000" max="2100">
-                </div>
-                
-                <div>
-                    <button type="submit">Calcular</button>
-                </div>
+                <label for="usuario">Colaborador:</label>
+                <select id="usuario" name="usuario">
+                    <option value="">Selecione um colaborador</option>
+                    {% for usuario in usuarios %}
+                        <option value="{{ usuario.IdUsuario }}" {% if usuario.IdUsuario|string == usuario_id|string %}selected{% endif %}>
+                            {{ usuario.Usuario }}
+                        </option>
+                    {% endfor %}
+                </select>
+            
+            
+                <label for="mes">Mês:</label>
+                <select id="mes" name="mes">
+                    {% for i in range(1, 13) %}
+                        <option value="{{ i }}" {% if i == mes %}selected{% endif %}>{{ meses[i - 1] }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="ano">Ano:</label>
+                <input type="number" id="ano" name="ano" value="{{ ano }}" min="2000" max="2100">
+
+                <button type="submit">Calcular</button>
+    
             </form>
         </div>
 

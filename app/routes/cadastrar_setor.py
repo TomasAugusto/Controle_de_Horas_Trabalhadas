@@ -43,13 +43,21 @@ def salvar_setor():
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Insere o novo setor na tabela Setores
-    query = """
-    INSERT INTO Setores (
-        Nome, Descricao, Ativo
-    ) VALUES (?, ?, ?)
-    """
     try:
+        # Verifica se já existe um setor com o mesmo nome
+        cursor.execute("SELECT IdSetor FROM Setores WHERE Nome = ?", (nome,))
+        setor_existente = cursor.fetchone()
+        
+        if setor_existente:
+            flash('Já existe um setor cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_setor.cadastrar_setor'))
+
+        # Insere o novo setor na tabela Setores
+        query = """
+        INSERT INTO Setores (
+            Nome, Descricao, Ativo
+        ) VALUES (?, ?, ?)
+        """
         cursor.execute(query, (nome, descricao, ativo))
         conn.commit()
         flash('Setor cadastrado com sucesso!', 'success')
@@ -104,13 +112,24 @@ def salvar_edicao_setor(id_setor):
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Atualiza o setor na tabela Setores
-    query = """
-    UPDATE Setores
-    SET Nome = ?, Descricao = ?, Ativo = ?
-    WHERE IdSetor = ?
-    """
     try:
+        # Verifica se já existe outro setor com o mesmo nome (excluindo o atual)
+        cursor.execute("""
+            SELECT IdSetor FROM Setores 
+            WHERE Nome = ? AND IdSetor != ?
+        """, (nome, id_setor))
+        setor_existente = cursor.fetchone()
+        
+        if setor_existente:
+            flash('Já existe outro setor cadastrado com este nome!', 'error')
+            return redirect(url_for('cadastrar_setor.editar_setor', id_setor=id_setor))
+
+        # Atualiza o setor na tabela Setores
+        query = """
+        UPDATE Setores
+        SET Nome = ?, Descricao = ?, Ativo = ?
+        WHERE IdSetor = ?
+        """
         cursor.execute(query, (nome, descricao, ativo, id_setor))
         conn.commit()
         flash('Setor atualizado com sucesso!', 'success')

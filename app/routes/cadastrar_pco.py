@@ -84,13 +84,24 @@ def salvar_pco():
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Insere o novo PCO na tabela PcoClientes
-    query = """
-    INSERT INTO PcoClientes (
-        Nome, Descricao, IdCliente, Ativo
-    ) VALUES (?, ?, ?, ?)
-    """
     try:
+        # Verifica se já existe um PCO com o mesmo nome (independente do cliente)
+        cursor.execute("""
+            SELECT IdPcoCliente FROM PcoClientes 
+            WHERE Nome = ?
+        """, (nome,))
+        pco_existente = cursor.fetchone()
+        
+        if pco_existente:
+            flash('Já existe um PCO cadastrado com este nome! O nome deve ser único.', 'error')
+            return redirect(url_for('cadastrar_pco.cadastrar_pco'))
+
+        # Insere o novo PCO na tabela PcoClientes
+        query = """
+        INSERT INTO PcoClientes (
+            Nome, Descricao, IdCliente, Ativo
+        ) VALUES (?, ?, ?, ?)
+        """
         cursor.execute(query, (nome, descricao, id_cliente, ativo))
         conn.commit()
         flash('PCO cadastrado com sucesso!', 'success')
@@ -102,8 +113,6 @@ def salvar_pco():
         conn.close()
 
     return redirect(url_for('cadastrar_pco.cadastrar_pco'))
-
-
 
 
 @cadastrar_pco_bp.route('/salvar_edicao_pco/<int:id_pco>', methods=['POST'])
@@ -121,13 +130,24 @@ def salvar_edicao_pco(id_pco):
     conn = conectar_banco()
     cursor = conn.cursor()
 
-    # Atualiza o PCO na tabela PcoClientes
-    query = """
-    UPDATE PcoClientes
-    SET Nome = ?, Descricao = ?, IdCliente = ?, Ativo = ?
-    WHERE IdPcoCliente = ?
-    """
     try:
+        # Verifica se já existe outro PCO com o mesmo nome (excluindo o próprio)
+        cursor.execute("""
+            SELECT IdPcoCliente FROM PcoClientes 
+            WHERE Nome = ? AND IdPcoCliente != ?
+        """, (nome, id_pco))
+        pco_existente = cursor.fetchone()
+        
+        if pco_existente:
+            flash('Já existe outro PCO cadastrado com este nome! O nome deve ser único.', 'error')
+            return redirect(url_for('cadastrar_pco.editar_pco', id_pco=id_pco))
+
+        # Atualiza o PCO na tabela PcoClientes
+        query = """
+        UPDATE PcoClientes
+        SET Nome = ?, Descricao = ?, IdCliente = ?, Ativo = ?
+        WHERE IdPcoCliente = ?
+        """
         cursor.execute(query, (nome, descricao, id_cliente, ativo, id_pco))
         conn.commit()
         flash('PCO atualizado com sucesso!', 'success')
