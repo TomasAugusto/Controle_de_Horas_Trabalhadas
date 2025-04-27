@@ -59,6 +59,8 @@
                 <a href="{{ url_for('consultar_registros.admin_consultar_registros') }}">
                     <button type="button">Limpar Filtros</button>
                 </a>
+
+                <button type="button" onclick="exportToExcel()">Exportar para Excel</button>
             </form>
         </div>
 
@@ -150,5 +152,19 @@
         
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
+
+    <script>
+        function exportToExcel() {
+            // Obter os parâmetros de filtro atuais
+            const params = new URLSearchParams(window.location.search);
+            
+            // Adicionar o parâmetro de exportação
+            params.set('export', 'excel');
+            
+            // Redirecionar para a mesma URL mas com o parâmetro de exportação
+            window.location.href = window.location.pathname + '?' + params.toString();
+        }
+    </script>
+    
 </body>
 </html>
