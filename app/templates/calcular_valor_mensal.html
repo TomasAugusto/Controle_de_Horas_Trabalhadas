@@ -32,7 +32,7 @@
 
         <div class="resultado">
             <p><strong>Valor da Hora:</strong> R$ {{ "%.2f"|format(valor_hora) }}</p>
-            <p><strong>Total de Horas Trabalhadas:</strong> {{ "%.2f"|format(total_horas) }} horas</p>
+            <p><strong>Total de Horas Trabalhadas:</strong> {{ horas_formatadas }}</p>
             <p><strong>Valor Total a Receber:</strong> R$ {{ "%.2f"|format(valor_total) }}</p>
             <p><strong>Mês:</strong> {{ nome_mes }} de {{ ano }}</p>
         </div>

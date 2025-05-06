@@ -7,6 +7,14 @@ from datetime import datetime, timedelta
 valor_a_receber_bp = Blueprint('valor_a_receber', __name__)
 
 
+
+def formatar_horas_decimais(valor_decimal):
+    horas = int(valor_decimal)
+    minutos = int(round((valor_decimal - horas) * 60))
+    return f"{horas}h{minutos:02d}min"
+
+
+
 #----------------------------------Valor a Receber-------------------------------------------
 
 @valor_a_receber_bp.route('/calcular_valor_mensal', methods=['GET', 'POST'])
@@ -38,12 +46,12 @@ def calcular_valor_mensal():
 
     # Consultar os registros do colaborador no mês e ano selecionados
     query = """
-    SELECT HoraInicio, HoraFim
+    SELECT DataRegistro, HoraInicio, HoraFim
     FROM RegistrosHoras
     WHERE IdColaborador = ?
     AND MONTH(DataRegistro) = ?
     AND YEAR(DataRegistro) = ?
-    ORDER BY HoraInicio
+    ORDER BY DataRegistro, HoraInicio
     """
     cursor.execute(query, (colaborador_id, mes, ano))
     registros = cursor.fetchall()
@@ -55,62 +63,72 @@ def calcular_valor_mensal():
     # Calcular o total de horas trabalhadas (considerando sobreposições)
     total_horas = calcular_horas_trabalhadas(registros)
 
+    horas_formatadas = formatar_horas_decimais(total_horas)
+
+
     # Calcular o valor total a receber
     valor_total = total_horas * valor_hora
 
     # Renderizar o template e passar os dados
     return render_template(
-        'calcular_valor_mensal.html',  # Nome do arquivo HTML
+        'calcular_valor_mensal.html', # Nome do arquivo HTML 
         mes=mes,
         nome_mes=nome_mes,  # Passar o nome do mês
         ano=ano,
         valor_hora=valor_hora,
         total_horas=total_horas,
         valor_total=valor_total,
-        meses=meses  # Passar a lista de meses para o template
+        meses=meses,
+        horas_formatadas=horas_formatadas
     )
 
 
+from collections import defaultdict
+
 def calcular_horas_trabalhadas(registros):
     """
-    Calcula o total de horas trabalhadas, considerando sobreposições de horários.
+    Calcula o total de horas trabalhadas por dia, considerando sobreposições de horários no mesmo dia.
     """
     if not registros:
         return 0
 
-    # Ordenar os registros por HoraInicio
-    registros_ordenados = sorted(registros, key=lambda x: x[0])
+    # Agrupar registros por data
+    registros_por_data = defaultdict(list)
 
-    # Inicializar a lista de intervalos consolidados
-    intervalos_consolidados = []
+    for data_registro, hora_inicio, hora_fim in registros:
+        data = data_registro  # Garante que é só a data, sem horário
+        hora_inicio_dt = datetime.combine(data, hora_inicio)
+        hora_fim_dt = datetime.combine(data, hora_fim)
+        registros_por_data[data].append((hora_inicio_dt, hora_fim_dt))
 
-    for registro in registros_ordenados:
-        hora_inicio = datetime.strptime(str(registro[0]), '%H:%M:%S')
-        hora_fim = datetime.strptime(str(registro[1]), '%H:%M:%S')
-
-        if not intervalos_consolidados:
-            intervalos_consolidados.append((hora_inicio, hora_fim))
-        else:
-            ultimo_inicio, ultimo_fim = intervalos_consolidados[-1]
-
-            # Verificar sobreposição
-            if hora_inicio <= ultimo_fim:
-                # Atualizar o intervalo consolidado
-                novo_inicio = min(ultimo_inicio, hora_inicio)
-                novo_fim = max(ultimo_fim, hora_fim)
-                intervalos_consolidados[-1] = (novo_inicio, novo_fim)
-            else:
-                # Adicionar um novo intervalo consolidado
-                intervalos_consolidados.append((hora_inicio, hora_fim))
-
-    # Calcular o total de horas trabalhadas
     total_horas = 0
-    for inicio, fim in intervalos_consolidados:
-        diferenca = fim - inicio
-        total_horas += diferenca.total_seconds() / 3600  # Converter segundos para horas
+
+    # Consolidar intervalos por dia
+    for data, intervalos in registros_por_data.items():
+        # Ordenar os intervalos por hora de início
+        intervalos.sort(key=lambda x: x[0])
+
+        intervalos_consolidados = []
+
+        for inicio, fim in intervalos:
+            if not intervalos_consolidados:
+                intervalos_consolidados.append((inicio, fim))
+            else:
+                ultimo_inicio, ultimo_fim = intervalos_consolidados[-1]
+                if inicio <= ultimo_fim:
+                    # Sobreposição: fundir
+                    novo_inicio = min(ultimo_inicio, inicio)
+                    novo_fim = max(ultimo_fim, fim)
+                    intervalos_consolidados[-1] = (novo_inicio, novo_fim)
+                else:
+                    intervalos_consolidados.append((inicio, fim))
+
+        # Soma os intervalos consolidados do dia
+        for inicio, fim in intervalos_consolidados:
+            diferenca = fim - inicio
+            total_horas += diferenca.total_seconds() / 3600  # Converter segundos em horas
 
     return total_horas
-
 
 
 @valor_a_receber_bp.route('/admin/calcular_valor_mensal', methods=['GET', 'POST'])
@@ -141,12 +159,13 @@ def admin_calcular_valor_mensal():
     # Consultar os registros do usuário selecionado no mês e ano selecionados
     if usuario_id:
         query = """
-        SELECT HoraInicio, HoraFim
+        SELECT DataRegistro, HoraInicio, HoraFim
         FROM RegistrosHoras
         WHERE IdColaborador = ?
         AND MONTH(DataRegistro) = ?
         AND YEAR(DataRegistro) = ?
-        ORDER BY HoraInicio
+        ORDER BY DataRegistro, HoraInicio
+
         """
         cursor.execute(query, (usuario_id, mes, ano))
         registros = cursor.fetchall()
@@ -175,7 +194,9 @@ def admin_calcular_valor_mensal():
 
     # Renderizar o template e passar os dados
     return render_template(
-        'admin_calcular_valor_mensal.html',  # Nome do arquivo HTML
+        'admin_calcular_valor_mensal.html',  
+        # Nome do arquivo HTML
+        horas_formatadas = formatar_horas_decimais(total_horas),
         mes=mes,
         nome_mes=nome_mes,  # Passar o nome do mês
         ano=ano,
